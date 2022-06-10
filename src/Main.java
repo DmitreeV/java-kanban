@@ -29,7 +29,7 @@ public class Main {
         System.out.println("2.1 Получение списка всех задач");
         System.out.println(manager.getTasksList());
         System.out.println(manager.getEpicsList());
-        System.out.println(manager.getSubtaksList());
+        System.out.println(manager.getSubtaskList());
 
         System.out.println("2.3 Получение по идентификатору");
         System.out.println(manager.getTaskByIdNumber(1));
@@ -43,7 +43,7 @@ public class Main {
         System.out.println("2.2 Удаление всех задач");
         System.out.println(manager.getTasksList());
         System.out.println(manager.getEpicsList());
-        System.out.println(manager.getSubtaksList());
+        System.out.println(manager.getSubtaskList());
 
         System.out.println("2.4 Создание");
         Task newFirstTask = manager.creationTask(firstTask);
@@ -65,10 +65,10 @@ public class Main {
 
         System.out.println(manager.getTasksList());
         System.out.println(manager.getEpicsList());
-        System.out.println(manager.getSubtaksList());
+        System.out.println(manager.getSubtaskList());
 
         System.out.println("3.1 Получение списка всех подзадач определённого эпика");
-        System.out.println(manager.subtaksList(1));
+        System.out.println(manager.subtaskList(1));
 
         System.out.println("2.6 Удаление по идентификатору");
 
@@ -79,7 +79,7 @@ public class Main {
 
         System.out.println(manager.getTasksList());
         System.out.println(manager.getEpicsList());
-        System.out.println(manager.getSubtaksList());
+        System.out.println(manager.getSubtaskList());
 
     }
 }
