@@ -18,12 +18,12 @@ public class Main {
         manager.saveEpics(firstEpic);
 
         Subtask firstSubtask = new Subtask(
-                "Купить продукты", "Купить всё и ничего не забыть", TaskStatus.NEW, 1);
+                "Купить продукты", "Купить всё и ничего не забыть", TaskStatus.DONE, 1);
         manager.saveSubtask(firstSubtask);
 
         Subtask secondSubtask = new Subtask(
                 "Купить вино"
-                , "Вино белое полусладкое", TaskStatus.NEW, 2);
+                , "Вино белое полусладкое", TaskStatus.DONE, 2);
         manager.saveSubtask(secondSubtask);
 
         System.out.println("2.1 Получение списка всех задач");

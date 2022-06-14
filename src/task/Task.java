@@ -14,6 +14,14 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String name, String description, TaskStatus status, int id) {// конструктор для обновления эпика
+
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
