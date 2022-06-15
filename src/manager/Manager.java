@@ -36,7 +36,7 @@ public class Manager {
         if (epic != null) {
             subtasks.put(id(subtask), subtask);
             epic.addIdOfSubtasks(subtask);
-            changeEpicStatus(epics.get(subtask.getEpicID()));
+            changeEpicStatus(epic);
         }
     }
     // 2.1 Получение списка задач
@@ -62,7 +62,6 @@ public class Manager {
     public void deleteEpic() {
         epics.clear();
         subtasks.clear();
-
     }
 
     public void deleteSubtask() {
@@ -121,9 +120,10 @@ public class Manager {
         int idUpdatedEpic = epic.getId();
         TaskStatus currentEpicStatus = epics.get(idUpdatedEpic).getStatus();
         Epic newEpic = new Epic(epic.getName(), currentEpicStatus, epic.getDescription()
-                , epic.getId(), epic.getSubtasksID());
+                , epic.getId(), epic.getSubtasks());
         if (epics.containsKey(idUpdatedEpic)) {
             epics.put(idUpdatedEpic, newEpic);
+            changeEpicStatus(newEpic);
         }
     }
 
@@ -136,7 +136,6 @@ public class Manager {
         int epicIdForStatus = subtask.getEpicID();
         Epic epic = epics.get(epicIdForStatus);
         if (epic != null) {
-            epic.addIdOfSubtasks(subtask);
             changeEpicStatus(epic);
         }
     }
@@ -159,7 +158,7 @@ public class Manager {
         int epicId = sub.getEpicID();
         Epic epic = epics.get(epicId);
         if (epic != null) {
-            epic.getSubtasks().remove(idNumber);
+            epic.getSubtasks().remove(Integer.valueOf(idNumber));
             changeEpicStatus(epic);
         }
         subtasks.remove(idNumber);
@@ -182,24 +181,24 @@ public class Manager {
         int epicID = epic.getId();
         ArrayList<Subtask> updatedListOfSubtasks = subtaskList(epicID);
 
-        int DoneCounter = 0;
-        int NewCounter = 0;
+        int doneCounter = 0;
+        int newCounter = 0;
         for (Subtask subtask : updatedListOfSubtasks) {
             switch (subtask.getStatus()) {
                 case NEW:
-                    NewCounter++;
+                    newCounter++;
                     break;
                 case IN_PROGRESS:
                     break;
                 case DONE:
-                    DoneCounter++;
+                    doneCounter++;
                     break;
             }
         }
 
-        if ((updatedListOfSubtasks.size() == 0) || (NewCounter == updatedListOfSubtasks.size())) {
+        if ((updatedListOfSubtasks.size() == 0) || (newCounter == updatedListOfSubtasks.size())) {
             epic.setStatus(TaskStatus.NEW);
-        } else if (DoneCounter == updatedListOfSubtasks.size()) {
+        } else if (doneCounter == updatedListOfSubtasks.size()) {
             epic.setStatus(TaskStatus.DONE);
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);

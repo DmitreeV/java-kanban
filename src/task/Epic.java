@@ -7,14 +7,6 @@ public class Epic extends Task {
 
     private List<Integer> subtasks = new ArrayList<>();
 
-    public void addIdOfSubtasks(Subtask subtask) {
-        subtasks.add(subtask.getId());
-    }
-
-    public List<Integer> getSubtasksID() {
-        return subtasks;
-    }
-
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
     }
@@ -23,6 +15,10 @@ public class Epic extends Task {
             , List<Integer> subtasks) { // конструктор для обновления эпика
         super(name, description, status, id);
         this.subtasks = subtasks;
+    }
+
+    public void addIdOfSubtasks(Subtask subtask) {
+        subtasks.add(subtask.getId());
     }
 
     public List<Integer> getSubtasks() {
