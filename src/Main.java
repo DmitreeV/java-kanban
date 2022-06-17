@@ -2,10 +2,13 @@
 import manager.*;
 import task.*;
 
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+
+        TaskManager manager = Managers.getDefault();
 
         Task firstTask = new Task("Погулять с собакой", "Погулять с собакой час", TaskStatus.NEW);
         manager.saveTask(firstTask);
@@ -18,13 +21,27 @@ public class Main {
         manager.saveEpics(firstEpic);
 
         Subtask firstSubtask = new Subtask(
-                "Купить продукты", "Купить всё и ничего не забыть", TaskStatus.DONE, 1);
+                "Купить продукты", "Купить всё и ничего не забыть", TaskStatus.DONE, firstEpic.getId());
         manager.saveSubtask(firstSubtask);
 
         Subtask secondSubtask = new Subtask(
                 "Купить вино"
-                , "Вино белое полусладкое", TaskStatus.DONE, 2);
+                , "Вино белое полусладкое", TaskStatus.DONE, firstEpic.getId());
         manager.saveSubtask(secondSubtask);
+
+        Epic secondEpic = new Epic("Собрать вещи для отпуска",
+                "Собрать вещи и ничего не забыть", TaskStatus.NEW);
+        manager.saveEpics(secondEpic);
+
+        Subtask firstSubtaskOfSecondEpic = new Subtask(
+                "Купить надувной матрас", "Двухместный матрас", TaskStatus.DONE, secondEpic.getId());
+        manager.saveSubtask(firstSubtaskOfSecondEpic);
+
+        Subtask secondSubtaskOfSecondEpic = new Subtask(
+                "Купить палатку"
+                , "Двухместную палатку", TaskStatus.DONE, secondEpic.getId());
+        manager.saveSubtask(secondSubtaskOfSecondEpic);
+
 
         System.out.println("2.1 Получение списка всех задач");
         System.out.println(manager.getTasksList());
@@ -33,10 +50,26 @@ public class Main {
 
         System.out.println("2.3 Получение по идентификатору");
         System.out.println(manager.getTaskByIdNumber(1));
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
+        System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(3));
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
+        System.out.println("Получение по идентификатору:");
         System.out.println(manager.getSubTaskByIdNumber(5));
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
+        System.out.println("Получение по идентификатору:");
+        System.out.println(manager.getSubTaskByIdNumber(7));
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
+        System.out.println("Получение по идентификатору:");
+        System.out.println(manager.getSubTaskByIdNumber(8));
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
 
-        manager.deleteTasks();
+       /* manager.deleteTasks();
         manager.deleteEpic();
         manager.deleteSubtask();
 
@@ -68,18 +101,18 @@ public class Main {
         System.out.println(manager.getSubtaskList());
 
         System.out.println("3.1 Получение списка всех подзадач определённого эпика");
-        System.out.println(manager.subtaskList(1));
+        System.out.println(manager.subtaskList(11));
 
         System.out.println("2.6 Удаление по идентификатору");
 
-        manager.deleteTaskById(6);
-        manager.deleteTaskById(7);
-        manager.deleteEpicById(8);
-        manager.deleteSubtaskById(9);
+        manager.deleteTaskById(9);
+        manager.deleteTaskById(10);
+        manager.deleteEpicById(11);
+
 
         System.out.println(manager.getTasksList());
         System.out.println(manager.getEpicsList());
         System.out.println(manager.getSubtaskList());
-
+*/
     }
 }

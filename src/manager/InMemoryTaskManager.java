@@ -4,13 +4,16 @@ import task.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
 
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private int idNumber = 0;
+
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     //Генерирование Id
     private int id(Task task) {
@@ -19,16 +22,18 @@ public class Manager {
     }
 
     // 1. Сохранение задач
-
+    @Override
     public void saveTask(Task task) {
         tasks.put(id(task), task);
     }
 
+    @Override
     public void saveEpics(Epic epic) {
         epics.put(id(epic), epic);
         changeEpicStatus(epic);
     }
 
+    @Override
     public void saveSubtask(Subtask subtask) {
 
         int epicIdOfSubTask = subtask.getEpicID();
@@ -39,31 +44,36 @@ public class Manager {
             changeEpicStatus(epic);
         }
     }
-    // 2.1 Получение списка задач
 
+    // 2.1 Получение списка задач
+    @Override
     public ArrayList<Task> getTasksList() {
         return new ArrayList<>(tasks.values());
     }
 
+    @Override
     public ArrayList<Epic> getEpicsList() {
         return new ArrayList<>(epics.values());
     }
 
+    @Override
     public ArrayList<Subtask> getSubtaskList() {
         return new ArrayList<>(subtasks.values());
     }
 
     // 2.2 Удаление задач
-
+    @Override
     public void deleteTasks() {
         tasks.clear();
     }
 
+    @Override
     public void deleteEpic() {
         epics.clear();
         subtasks.clear();
     }
 
+    @Override
     public void deleteSubtask() {
         for (Integer sub : subtasks.keySet()) {
             Subtask subtask = subtasks.get(sub);
@@ -79,35 +89,45 @@ public class Manager {
     }
 
     //2.3 Получение по идентификатору
-
+    @Override
     public Task getTaskByIdNumber(int idNumber) {
+        Task task = tasks.get(idNumber);
+        inMemoryHistoryManager.add(task);
         return tasks.get(idNumber);
     }
 
+    @Override
     public Epic getEpicTaskByIdNumber(int idNumber) {
+        Epic epic = epics.get(idNumber);
+        inMemoryHistoryManager.add(epic);
         return epics.get(idNumber);
     }
 
+    @Override
     public Subtask getSubTaskByIdNumber(int idNumber) {
+        Subtask subtask = subtasks.get(idNumber);
+        inMemoryHistoryManager.add(subtask);
         return subtasks.get(idNumber);
     }
 
     // 2.4 Создание задачи
-
+    @Override
     public Task creationTask(Task task) {
         return new Task(task.getName(), task.getDescription(), task.getStatus());
     }
 
+    @Override
     public Epic creationEpic(Epic epic) {
         return new Epic(epic.getName(), epic.getDescription(), epic.getStatus());
     }
 
+    @Override
     public Subtask creationSubtask(Subtask subtask) {
         return new Subtask(subtask.getName(), subtask.getDescription(), subtask.getStatus(), subtask.getEpicID());
     }
 
     // 2.5 Обновление задачи
-
+    @Override
     public void updateTask(Task task) {
         int idUpdatedTask = task.getId();
         if (tasks.containsKey(idUpdatedTask)) {
@@ -115,6 +135,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateEpic(Epic epic) {
 
         int idUpdatedEpic = epic.getId();
@@ -127,6 +148,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateSubtask(Subtask subtask) {
 
         int idUpdatedSubTask = subtask.getId();
@@ -139,12 +161,14 @@ public class Manager {
             changeEpicStatus(epic);
         }
     }
-    // 2.6 Удаление по идентификатору
 
+    // 2.6 Удаление по идентификатору
+    @Override
     public void deleteTaskById(int idNumber) {
         tasks.remove(idNumber);
     }
 
+    @Override
     public void deleteEpicById(int idNumber) {
         Epic epic = epics.get(idNumber);
         for (int sub : epic.getSubtasks()) {
@@ -153,6 +177,7 @@ public class Manager {
         epics.remove(idNumber);
     }
 
+    @Override
     public void deleteSubtaskById(int idNumber) {
         Subtask sub = subtasks.get(idNumber);
         int epicId = sub.getEpicID();
@@ -203,5 +228,12 @@ public class Manager {
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    // История просмотров задач
+
+    @Override
+    public List<Task> getHistory() {
+        return inMemoryHistoryManager.getHistory();
     }
 }
