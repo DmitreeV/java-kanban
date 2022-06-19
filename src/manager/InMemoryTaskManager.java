@@ -68,13 +68,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteEpic() {
+    public void deleteEpics() {
         epics.clear();
         subtasks.clear();
     }
 
     @Override
-    public void deleteSubtask() {
+    public void deleteSubtasks() {
         for (Integer sub : subtasks.keySet()) {
             Subtask subtask = subtasks.get(sub);
             if (subtask != null) {
@@ -111,17 +111,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // 2.4 Создание задачи
-    @Override
+
     public Task creationTask(Task task) {
         return new Task(task.getName(), task.getDescription(), task.getStatus());
     }
 
-    @Override
     public Epic creationEpic(Epic epic) {
         return new Epic(epic.getName(), epic.getDescription(), epic.getStatus());
     }
 
-    @Override
     public Subtask creationSubtask(Subtask subtask) {
         return new Subtask(subtask.getName(), subtask.getDescription(), subtask.getStatus(), subtask.getEpicID());
     }

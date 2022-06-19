@@ -30,9 +30,9 @@ public interface TaskManager {
 
     void deleteTasks();
 
-    void deleteEpic();
+    void deleteEpics();
 
-    void deleteSubtask();
+    void deleteSubtasks();
 
     //2.3 Получение по идентификатору
 
@@ -41,14 +41,6 @@ public interface TaskManager {
     Epic getEpicTaskByIdNumber(int idNumber);
 
     Subtask getSubTaskByIdNumber(int idNumber);
-
-    // 2.4 Создание задачи
-
-    Task creationTask(Task task);
-
-    Epic creationEpic(Epic epic);
-
-    Subtask creationSubtask(Subtask subtask);
 
 // 2.5 Обновление задачи
 
