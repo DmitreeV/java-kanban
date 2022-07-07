@@ -28,18 +28,23 @@ public class Main {
                 , "Вино белое полусладкое", TaskStatus.DONE, firstEpic.getId());
         manager.saveSubtask(secondSubtask);
 
+        Subtask thirdSubtask = new Subtask(
+                "Купить фрукты"
+                , "Яблоки, апельсины, бананы", TaskStatus.DONE, firstEpic.getId());
+        manager.saveSubtask(thirdSubtask);
+
         Epic secondEpic = new Epic("Собрать вещи для отпуска",
                 "Собрать вещи и ничего не забыть", TaskStatus.NEW);
         manager.saveEpics(secondEpic);
 
-        Subtask firstSubtaskOfSecondEpic = new Subtask(
+        /*Subtask firstSubtaskOfSecondEpic = new Subtask(
                 "Купить надувной матрас", "Двухместный матрас", TaskStatus.DONE, secondEpic.getId());
         manager.saveSubtask(firstSubtaskOfSecondEpic);
 
         Subtask secondSubtaskOfSecondEpic = new Subtask(
                 "Купить палатку"
                 , "Двухместную палатку", TaskStatus.DONE, secondEpic.getId());
-        manager.saveSubtask(secondSubtaskOfSecondEpic);
+        manager.saveSubtask(secondSubtaskOfSecondEpic);*/
 
 
         System.out.println("2.1 Получение списка всех задач");
@@ -60,11 +65,21 @@ public class Main {
         System.out.println("История просмотров:");
         System.out.println(manager.getHistory());
         System.out.println("Получение по идентификатору:");
-        System.out.println(manager.getSubTaskByIdNumber(7));
+        System.out.println(manager.getEpicTaskByIdNumber(3));
         System.out.println("История просмотров:");
         System.out.println(manager.getHistory());
         System.out.println("Получение по идентификатору:");
-        System.out.println(manager.getSubTaskByIdNumber(8));
+        System.out.println(manager.getEpicTaskByIdNumber(7));
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
+
+        System.out.println("Удалите задачу из истории:");
+        manager.remove(5);
+        System.out.println("История просмотров:");
+        System.out.println(manager.getHistory());
+
+        System.out.println("Удалите эпик с тремя подзадачами:");
+        manager.deleteEpicById(3);
         System.out.println("История просмотров:");
         System.out.println(manager.getHistory());
 
