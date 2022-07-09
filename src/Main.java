@@ -55,33 +55,33 @@ public class Main {
         System.out.println("2.3 Получение по идентификатору");
         System.out.println(manager.getTaskByIdNumber(1));
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(3));
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getSubTaskByIdNumber(5));
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(3));
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(7));
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
 
         System.out.println("Удалите задачу из истории:");
         manager.remove(5);
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
 
         System.out.println("Удалите эпик с тремя подзадачами:");
         manager.deleteEpicById(3);
         System.out.println("История просмотров:");
-        System.out.println(manager.getHistory());
+        manager.getHistory();
 
        /* manager.deleteTasks();
         manager.deleteEpic();

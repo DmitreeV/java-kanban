@@ -93,21 +93,21 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTaskByIdNumber(int idNumber) {
         Task task = tasks.get(idNumber);
         inMemoryHistoryManager.add(task);
-        return tasks.get(idNumber);
+        return task;
     }
 
     @Override
     public Epic getEpicTaskByIdNumber(int idNumber) {
         Epic epic = epics.get(idNumber);
         inMemoryHistoryManager.add(epic);
-        return epics.get(idNumber);
+        return epic;
     }
 
     @Override
     public Subtask getSubTaskByIdNumber(int idNumber) {
         Subtask subtask = subtasks.get(idNumber);
         inMemoryHistoryManager.add(subtask);
-        return subtasks.get(idNumber);
+        return subtask;
     }
 
     // 2.4 Создание задачи
@@ -171,10 +171,12 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteEpicById(int idNumber) {
         Epic epic = epics.get(idNumber);
         for (int sub : epic.getSubtasks()) {
+            inMemoryHistoryManager.remove(sub);
             subtasks.remove(sub);
         }
         inMemoryHistoryManager.remove(idNumber);
         epics.remove(idNumber);
+
     }
 
     @Override

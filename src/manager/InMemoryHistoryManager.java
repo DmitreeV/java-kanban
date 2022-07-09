@@ -6,17 +6,13 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private int initialCapacity = 10;
-
-    private List<Task> listLastTasks = new ArrayList<>(initialCapacity);
-
     private final Map<Integer, Node> customLinkedList = new HashMap<>();
 
     private Node first;
 
     private Node last;
 
-    public class Node {
+    private class Node {
         Task element;
         Node next;
         Node previous;
@@ -29,7 +25,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public List<Task> getHistory() {
+        printByLine();
         return getTasks();
+    }
+
+    private void printByLine(){ //печатает историю построчно
+        for (Task line : getTasks())
+        {
+            System.out.println(line);
+        }
     }
 
     @Override
