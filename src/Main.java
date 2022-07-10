@@ -1,13 +1,9 @@
 import manager.*;
 import task.*;
 
-import java.util.ArrayList;
-
 public class Main {
-
+    static TaskManager manager = Managers.getDefault();
     public static void main(String[] args) {
-
-        TaskManager manager = Managers.getDefault();
 
         Task firstTask = new Task("Погулять с собакой", "Погулять с собакой час", TaskStatus.NEW);
         manager.saveTask(firstTask);
@@ -55,33 +51,33 @@ public class Main {
         System.out.println("2.3 Получение по идентификатору");
         System.out.println(manager.getTaskByIdNumber(1));
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(3));
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getSubTaskByIdNumber(5));
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(3));
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
         System.out.println("Получение по идентификатору:");
         System.out.println(manager.getEpicTaskByIdNumber(7));
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
 
         System.out.println("Удалите задачу из истории:");
-        manager.remove(5);
+        manager.deleteSubtaskById(5);
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
 
         System.out.println("Удалите эпик с тремя подзадачами:");
         manager.deleteEpicById(3);
         System.out.println("История просмотров:");
-        manager.getHistory();
+        printHistoryByLine();
 
        /* manager.deleteTasks();
         manager.deleteEpic();
@@ -128,5 +124,11 @@ public class Main {
         System.out.println(manager.getEpicsList());
         System.out.println(manager.getSubtaskList());
 */
+    }
+    private static void printHistoryByLine() { //печатает историю построчно
+        for (Task line : manager.getHistory())
+        {
+            System.out.println(line);
+        }
     }
 }

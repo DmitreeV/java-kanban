@@ -25,24 +25,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public List<Task> getHistory() {
-        printByLine();
         return getTasks();
-    }
-
-    private void printByLine(){ //печатает историю построчно
-        for (Task line : getTasks())
-        {
-            System.out.println(line);
-        }
     }
 
     @Override
     public void add(Task task) {
         int taskId = task.getId();
-        if (customLinkedList.containsKey(taskId)) {
-            removeNode(customLinkedList.get(taskId));
-            customLinkedList.remove(taskId);
-        }
+        remove(taskId);
+
         linkLast(task);
         customLinkedList.put(taskId, last);
     }

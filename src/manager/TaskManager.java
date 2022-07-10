@@ -63,7 +63,4 @@ public interface TaskManager {
     ArrayList<Subtask> subtaskList(int idNumber);
 
     List<Task> getHistory();
-
-    void remove(int idNumber);
-
 }
