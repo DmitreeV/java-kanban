@@ -8,12 +8,12 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected HashMap<Integer, Task> tasks = new HashMap<>();
+    protected HashMap<Integer, Epic> epics = new HashMap<>();
+    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private int idNumber = 0;
 
-    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     //Генерирование Id
     private int id(Task task) {
@@ -124,15 +124,16 @@ public class InMemoryTaskManager implements TaskManager {
     // 2.4 Создание задачи
 
     public Task creationTask(Task task) {
-        return new Task(task.getName(), task.getDescription(), task.getStatus());
+        return new Task(task.getName(), task.getTaskType() , task.getStatus(), task.getDescription());
     }
 
     public Epic creationEpic(Epic epic) {
-        return new Epic(epic.getName(), epic.getDescription(), epic.getStatus());
+        return new Epic(epic.getName(), epic.getTaskType(), epic.getStatus(), epic.getDescription());
     }
 
     public Subtask creationSubtask(Subtask subtask) {
-        return new Subtask(subtask.getName(), subtask.getDescription(), subtask.getStatus(), subtask.getEpicID());
+        return new Subtask(subtask.getName(), subtask.getTaskType(), subtask.getStatus(), subtask.getDescription()
+                , subtask.getEpicID());
     }
 
     // 2.5 Обновление задачи
@@ -149,7 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         int idUpdatedEpic = epic.getId();
         TaskStatus currentEpicStatus = epics.get(idUpdatedEpic).getStatus();
-        Epic newEpic = new Epic(epic.getName(), currentEpicStatus, epic.getDescription()
+        Epic newEpic = new Epic(epic.getName(), epic.getTaskType(), currentEpicStatus, epic.getDescription()
                 , epic.getId(), epic.getSubtasks());
         if (epics.containsKey(idUpdatedEpic)) {
             epics.put(idUpdatedEpic, newEpic);
@@ -216,7 +217,7 @@ public class InMemoryTaskManager implements TaskManager {
         return listSubtasks;
     }
 
-    private void changeEpicStatus(Epic epic) { // метод для смены статуса эпика
+    protected void changeEpicStatus(Epic epic) { // метод для смены статуса эпика
         int epicID = epic.getId();
         ArrayList<Subtask> updatedListOfSubtasks = subtaskList(epicID);
 

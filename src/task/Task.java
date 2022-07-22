@@ -1,23 +1,30 @@
 package task;
 
+import manager.FileBackedTasksManager;
+
 public class Task {
 
     protected int id;
     protected String name;
     protected String description;
     protected TaskStatus status;
+    protected FileBackedTasksManager.TaskType taskType;
 
-    public Task(String name, String description, TaskStatus status) {
-
+    public Task(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description) {
+        this.taskType = taskType;
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Task(String name, String description, TaskStatus status, int id) {  // конструктор для обновления эпика
+    public Task(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description, int id) {  // конструктор для обновления эпика
 
-        this(name, description, status);
+        this(name, taskType, status, description);
         this.id = id;
+    }
+
+    public FileBackedTasksManager.TaskType getTaskType() {
+        return taskType;
     }
 
     public int getId() {

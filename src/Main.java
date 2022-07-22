@@ -2,10 +2,10 @@ import manager.*;
 import task.*;
 
 public class Main {
-    static TaskManager manager = Managers.getDefault();
-    public static void main(String[] args) {
+    //static TaskManager manager = Managers.getDefault();
+    //public static void main(String[] args) {
 
-        Task firstTask = new Task("Погулять с собакой", "Погулять с собакой час", TaskStatus.NEW);
+        /*Task firstTask = new Task("Погулять с собакой", "Погулять с собакой час", TaskStatus.NEW);
         manager.saveTask(firstTask);
 
         Task secondTask = new Task("Пойти в бассейн", "Хорошо поплавать", TaskStatus.NEW);
@@ -40,7 +40,7 @@ public class Main {
         Subtask secondSubtaskOfSecondEpic = new Subtask(
                 "Купить палатку"
                 , "Двухместную палатку", TaskStatus.DONE, secondEpic.getId());
-        manager.saveSubtask(secondSubtaskOfSecondEpic);*/
+        manager.saveSubtask(secondSubtaskOfSecondEpic);
 
 
         System.out.println("2.1 Получение списка всех задач");
@@ -79,7 +79,7 @@ public class Main {
         System.out.println("История просмотров:");
         printHistoryByLine();
 
-       /* manager.deleteTasks();
+        manager.deleteTasks();
         manager.deleteEpic();
         manager.deleteSubtask();
 
@@ -123,12 +123,12 @@ public class Main {
         System.out.println(manager.getTasksList());
         System.out.println(manager.getEpicsList());
         System.out.println(manager.getSubtaskList());
-*/
+
     }
     private static void printHistoryByLine() { //печатает историю построчно
         for (Task line : manager.getHistory())
         {
             System.out.println(line);
         }
-    }
+    }*/
 }

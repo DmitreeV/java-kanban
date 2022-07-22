@@ -1,11 +1,14 @@
 package task;
 
+import manager.FileBackedTasksManager;
+
 public class Subtask extends Task{
 
     private int epicID;
 
-    public Subtask(String name, String description, TaskStatus status, int epicID) {
-        super(name, description, status);
+    public Subtask(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description,
+             int epicID) {
+        super(name, taskType, status, description);
         this.epicID = epicID;
     }
 
