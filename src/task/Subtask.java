@@ -6,7 +6,7 @@ public class Subtask extends Task{
 
     private int epicID;
 
-    public Subtask(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description,
+    public Subtask(String name, TaskType taskType, TaskStatus status, String description,
              int epicID) {
         super(name, taskType, status, description);
         this.epicID = epicID;
@@ -25,9 +25,15 @@ public class Subtask extends Task{
         return "Subtask{" +
                 "epicID=" + epicID +
                 ", id=" + id +
+                ", taskType=" + taskType +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 ", status=" + status +
+                ", description='" + description + '\'' +
                 '}';
+    }
+
+    public String getDescriptionSubtask(){
+        return getId() + "," + TaskType.SUBTASK + "," + getName() + "," + getStatus() + ","
+                + getDescription() + "," + getEpicID();
     }
 }

@@ -1,29 +1,27 @@
 package task;
 
-import manager.FileBackedTasksManager;
-
 public class Task {
 
     protected int id;
     protected String name;
     protected String description;
     protected TaskStatus status;
-    protected FileBackedTasksManager.TaskType taskType;
+    protected TaskType taskType;
 
-    public Task(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description) {
+    public Task(String name, TaskType taskType, TaskStatus status, String description) {
         this.taskType = taskType;
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Task(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description, int id) {  // конструктор для обновления эпика
+    public Task(String name, TaskType taskType, TaskStatus status, String description, int id) {  // конструктор для обновления эпика
 
         this(name, taskType, status, description);
         this.id = id;
     }
 
-    public FileBackedTasksManager.TaskType getTaskType() {
+    public TaskType getTaskType() {
         return taskType;
     }
 
@@ -63,9 +61,15 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", taskType=" + taskType +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 ", status=" + status +
+                ", description='" + description + '\'' +
                 '}';
+    }
+
+    public String getDescriptionTask(){
+        return getId() + "," + TaskType.TASK + "," + getName() + "," + getStatus() + ","
+                + getDescription();
     }
 }

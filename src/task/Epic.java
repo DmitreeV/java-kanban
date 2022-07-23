@@ -9,11 +9,11 @@ public class Epic extends Task {
 
     private List<Integer> subtasks = new ArrayList<>();
 
-    public Epic(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description) {
+    public Epic(String name, TaskType taskType, TaskStatus status, String description) {
         super(name, taskType, status, description);
     }
 
-    public Epic(String name, FileBackedTasksManager.TaskType taskType, TaskStatus status, String description, int id,
+    public Epic(String name, TaskType taskType, TaskStatus status, String description, int id,
              List<Integer> subtasks) { // конструктор для обновления эпика
         super(name, taskType, status, description, id);
         this.subtasks = subtasks;
@@ -36,9 +36,15 @@ public class Epic extends Task {
         return "Epic{" +
                 "subtasks=" + subtasks +
                 ", id=" + id +
+                ", taskType=" + taskType +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 ", status=" + status +
+                ", description='" + description + '\'' +
                 '}';
+    }
+
+    public String getDescriptionEpic(){
+        return getId() + "," + TaskType.EPIC + "," + getName() + "," + getStatus() + ","
+                + getDescription();
     }
 }

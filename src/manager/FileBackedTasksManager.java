@@ -1,17 +1,13 @@
 package manager;
 
 import exception.ManagerSaveException;
-import task.Epic;
-import task.Subtask;
-import task.Task;
-import task.TaskStatus;
+import task.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
@@ -23,10 +19,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private FileBackedTasksManager(File file) {
         super();
         this.file = file;
-    }
-
-    public enum TaskType {
-        TASK, EPIC, SUBTASK
     }
 
     private void save() {
@@ -47,24 +39,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             bufferedWriter.write("\n" + toString(getHistory()));
 
         } catch (IOException exception) {
-            throw new ManagerSaveException(exception.getMessage());
+            throw new ManagerSaveException(exception.getMessage(), exception.getCause());
         }
     }
 
     // Метод для сохранения задачи в строку
     private String toStringTask(Task task) {
-        return task.getId() + "," + TaskType.TASK + "," + task.getName() + "," + task.getStatus() + ","
-                + task.getDescription();
+        return task.getDescriptionTask();
     }
 
     private String toStringEpic(Epic epic) {
-        return epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + "," + epic.getStatus() + ","
-                + epic.getDescription();
+        return epic.getDescriptionEpic();
     }
 
     private String toStringSubtask(Subtask subtask) {
-        return subtask.getId() + "," + TaskType.SUBTASK + "," + subtask.getName() + "," + subtask.getStatus() + ","
-                + subtask.getDescription() + "," + subtask.getEpicID();
+        return subtask.getDescriptionSubtask();
     }
 
     // Метод для создания задачи из строки
@@ -122,34 +111,51 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     // Метод который восстанавливает данные менеджера из файла при запуске программы
-
     private static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager manager = new FileBackedTasksManager(file);
+
+        List<String> stringList;
+        Map<Integer, Task> taskHashMap = new HashMap<>();
+
         try {
-            String line = Files.readString(Path.of(String.valueOf(file)));
+            stringList = Files.readAllLines(file.toPath());
 
-            String[] lines = line.split("\n");
-            int i = 1;
+            for (int i = 1; i < stringList.size(); i++) {
+                Task task = taskFromString(stringList.get(i));
 
-            while (!lines[i].isEmpty()) {
-                Task task = taskFromString(lines[i]);
-                ++i;
-                manager.saveTask(task);
+                taskHashMap.put(task.getId(), task);
+                if (TaskType.TASK == task.getTaskType()) {
+                    manager.tasks.put(task.getId(), task);
 
-                if (lines.length == i)
-                    break;
-            }
-            if (i == lines.length) {
-                List<Integer> history = fromString(lines[lines.length - 1]);
-                for (Integer id : history) {
-                    manager.getHistory().add(manager.getTaskByIdNumber(id));
-                    manager.getHistory().add(manager.getEpicTaskByIdNumber(id));
-                    manager.getHistory().add(manager.getSubTaskByIdNumber(id));
+                }
+                if (TaskType.EPIC == task.getTaskType()) {
+                    Epic epic = (Epic) task;
+                    manager.epics.put(epic.getId(), epic);
+
+                }
+                if (TaskType.SUBTASK == task.getTaskType()) {
+                    Subtask subtask = (Subtask) task;
+                    manager.subtasks.put(subtask.getId(), subtask);
+
+                    Epic epicInSub = manager.epics.get(subtask.getEpicID());
+                    epicInSub.getSubtasks().add(subtask.getId());
+                    manager.changeEpicStatus(epicInSub);
+
+                    return manager;
                 }
             }
+
+            String history = stringList.get(stringList.size() - 1);
+            List<Integer> list = fromString(history);
+            for (Integer id : list) {
+                manager.getHistory().add(taskHashMap.get(id));
+            }
+            int newID = 0;
+            manager.idNumber = newID;
             return manager;
+
         } catch (IOException exception) {
-            throw new ManagerSaveException(exception.getMessage());
+            throw new ManagerSaveException(exception.getMessage(), exception.getCause());
         }
     }
 
@@ -177,10 +183,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fbTasksManager.getTaskByIdNumber(1);
         fbTasksManager.getEpicTaskByIdNumber(3);
         fbTasksManager.getSubTaskByIdNumber(5);
-        
+
+        FileBackedTasksManager fbTasksManager2 = loadFromFile(new File("src/manager/testFiles.csv"));
     }
 
-    // 1. Сохранение задач
     @Override
     public void saveTask(Task task) {
         super.saveTask(task);
@@ -199,23 +205,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-    // 2.1 Получение списка задач
-    @Override
-    public ArrayList<Task> getTasksList() {
-        return super.getTasksList();
-    }
-
-    @Override
-    public ArrayList<Epic> getEpicsList() {
-        return super.getEpicsList();
-    }
-
-    @Override
-    public ArrayList<Subtask> getSubtaskList() {
-        return super.getSubtaskList();
-    }
-
-    // 2.2 Удаление задач
     @Override
     public void deleteTasks() {
         super.deleteTasks();
@@ -234,7 +223,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-    //2.3 Получение по идентификатору
     @Override
     public Task getTaskByIdNumber(int idNumber) {
         Task task = super.getTaskByIdNumber(idNumber);
@@ -256,7 +244,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return subtask;
     }
 
-    // 2.4 Создание задачи
     @Override
     public Task creationTask(Task task) {
         Task task1 = super.creationTask(task);
@@ -278,7 +265,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return subtask1;
     }
 
-    // 2.5 Обновление задачи
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
@@ -297,7 +283,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-    // 2.6 Удаление по идентификатору
     @Override
     public void deleteTaskById(int idNumber) {
         super.deleteTaskById(idNumber);
@@ -314,17 +299,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     public void deleteSubtaskById(int idNumber) {
         super.deleteSubtaskById(idNumber);
         save();
-    }
-
-    // 3.1 Получение списка подзадач определённого эпика
-    @Override
-    public ArrayList<Subtask> subtaskList(int idNumber) {
-        return super.subtaskList(idNumber);
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return super.getHistory();
     }
 }
 

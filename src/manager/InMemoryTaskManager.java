@@ -11,12 +11,12 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> tasks = new HashMap<>();
     protected HashMap<Integer, Epic> epics = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private int idNumber = 0;
+    protected int idNumber = 0;
 
     private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     //Генерирование Id
-    private int id(Task task) {
+    public int id(Task task) {
         task.setId(++idNumber);
         return idNumber;
     }
@@ -24,12 +24,14 @@ public class InMemoryTaskManager implements TaskManager {
     // 1. Сохранение задач
     @Override
     public void saveTask(Task task) {
-        tasks.put(id(task), task);
+        task.setId(++idNumber);
+        tasks.put(task.getId(), task);
     }
 
     @Override
     public void saveEpics(Epic epic) {
-        epics.put(id(epic), epic);
+        epic.setId(++idNumber);
+        epics.put(epic.getId(), epic);
         changeEpicStatus(epic);
     }
 
