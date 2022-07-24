@@ -1,7 +1,5 @@
 package task;
 
-import manager.FileBackedTasksManager;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +40,8 @@ public class Epic extends Task {
                 ", description='" + description + '\'' +
                 '}';
     }
-
-    public String getDescriptionEpic(){
+    @Override
+    public String getDescriptionTask(){
         return getId() + "," + TaskType.EPIC + "," + getName() + "," + getStatus() + ","
                 + getDescription();
     }

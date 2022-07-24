@@ -1,7 +1,5 @@
 package task;
 
-import manager.FileBackedTasksManager;
-
 public class Subtask extends Task{
 
     private int epicID;
@@ -32,7 +30,8 @@ public class Subtask extends Task{
                 '}';
     }
 
-    public String getDescriptionSubtask(){
+    @Override
+    public String getDescriptionTask(){
         return getId() + "," + TaskType.SUBTASK + "," + getName() + "," + getStatus() + ","
                 + getDescription() + "," + getEpicID();
     }

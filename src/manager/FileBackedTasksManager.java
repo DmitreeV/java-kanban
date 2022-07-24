@@ -30,12 +30,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             for (Task task : getTasksList()) {
                 bufferedWriter.write(toStringTask(task) + "\n");
             }
+
             for (Epic epic : getEpicsList()) {
-                bufferedWriter.write(toStringEpic(epic) + "\n");
+                bufferedWriter.write(toStringTask(epic) + "\n");
             }
+
             for (Subtask subtask : getSubtaskList()) {
-                bufferedWriter.write(toStringSubtask(subtask) + "\n");
+                bufferedWriter.write(toStringTask(subtask) + "\n");
             }
+
             bufferedWriter.write("\n" + toString(getHistory()));
 
         } catch (IOException exception) {
@@ -46,14 +49,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     // Метод для сохранения задачи в строку
     private String toStringTask(Task task) {
         return task.getDescriptionTask();
-    }
-
-    private String toStringEpic(Epic epic) {
-        return epic.getDescriptionEpic();
-    }
-
-    private String toStringSubtask(Subtask subtask) {
-        return subtask.getDescriptionSubtask();
     }
 
     // Метод для создания задачи из строки
@@ -70,19 +65,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         switch (taskType) {
             case TASK:
                 task = new Task(name, taskType, taskStatus, description);
-                task.setId(id);
                 break;
 
             case EPIC:
                 task = new Epic(name, taskType, taskStatus, description);
-                task.setId(id);
                 break;
 
             case SUBTASK:
                 task = new Subtask(name, taskType, taskStatus, description, Integer.parseInt(arTask[5]));
-                task.setId(id);
                 break;
         }
+        task.setId(id);
         return task;
     }
 
@@ -116,14 +109,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         List<String> stringList;
         Map<Integer, Task> taskHashMap = new HashMap<>();
+        int newID = 0;
 
         try {
             stringList = Files.readAllLines(file.toPath());
 
             for (int i = 1; i < stringList.size(); i++) {
                 Task task = taskFromString(stringList.get(i));
-
                 taskHashMap.put(task.getId(), task);
+
                 if (TaskType.TASK == task.getTaskType()) {
                     manager.tasks.put(task.getId(), task);
 
@@ -131,17 +125,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 if (TaskType.EPIC == task.getTaskType()) {
                     Epic epic = (Epic) task;
                     manager.epics.put(epic.getId(), epic);
-
                 }
                 if (TaskType.SUBTASK == task.getTaskType()) {
                     Subtask subtask = (Subtask) task;
                     manager.subtasks.put(subtask.getId(), subtask);
 
-                    Epic epicInSub = manager.epics.get(subtask.getEpicID());
-                    epicInSub.getSubtasks().add(subtask.getId());
-                    manager.changeEpicStatus(epicInSub);
+                    if (!manager.epics.isEmpty()) {
+                        Epic epicInSub = manager.epics.get(subtask.getEpicID());
+                        epicInSub.getSubtasks().add(subtask.getId());
+                    }
 
                     return manager;
+                }
+
+                if (task.getId() > newID) {
+                    newID = task.getId();
                 }
             }
 
@@ -150,7 +148,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             for (Integer id : list) {
                 manager.getHistory().add(taskHashMap.get(id));
             }
-            int newID = 0;
+
             manager.idNumber = newID;
             return manager;
 
