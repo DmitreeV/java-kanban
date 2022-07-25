@@ -121,10 +121,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 if (TaskType.TASK == task.getTaskType()) {
                     manager.tasks.put(task.getId(), task);
 
+
                 }
                 if (TaskType.EPIC == task.getTaskType()) {
                     Epic epic = (Epic) task;
                     manager.epics.put(epic.getId(), epic);
+
                 }
                 if (TaskType.SUBTASK == task.getTaskType()) {
                     Subtask subtask = (Subtask) task;
@@ -134,8 +136,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                         Epic epicInSub = manager.epics.get(subtask.getEpicID());
                         epicInSub.getSubtasks().add(subtask.getId());
                     }
-
-                    return manager;
+                    break;
                 }
 
                 if (task.getId() > newID) {
