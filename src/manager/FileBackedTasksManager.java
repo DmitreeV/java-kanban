@@ -115,18 +115,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             stringList = Files.readAllLines(file.toPath());
 
             for (int i = 1; i < stringList.size(); i++) {
+                String line = stringList.get(i);
+
+                if (line.isBlank()) {
+                    break;
+                }
+
                 Task task = taskFromString(stringList.get(i));
+
                 taskHashMap.put(task.getId(), task);
 
                 if (TaskType.TASK == task.getTaskType()) {
                     manager.tasks.put(task.getId(), task);
-
-
                 }
                 if (TaskType.EPIC == task.getTaskType()) {
                     Epic epic = (Epic) task;
                     manager.epics.put(epic.getId(), epic);
-
                 }
                 if (TaskType.SUBTASK == task.getTaskType()) {
                     Subtask subtask = (Subtask) task;
@@ -136,7 +140,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                         Epic epicInSub = manager.epics.get(subtask.getEpicID());
                         epicInSub.getSubtasks().add(subtask.getId());
                     }
-                    break;
                 }
 
                 if (task.getId() > newID) {
@@ -179,11 +182,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         fbTasksManager.saveSubtask(new Subtask("Купить вино", TaskType.SUBTASK, TaskStatus.DONE,
                 "Вино белое полусладкое", 3));
 
+        fbTasksManager.saveSubtask(new Subtask("Найденная сабтаска", TaskType.SUBTASK, TaskStatus.DONE,
+                "Эта сабтаска читается", 3));
+
         fbTasksManager.getTaskByIdNumber(1);
         fbTasksManager.getEpicTaskByIdNumber(3);
         fbTasksManager.getSubTaskByIdNumber(5);
+        fbTasksManager.getSubTaskByIdNumber(6);
 
         FileBackedTasksManager fbTasksManager2 = loadFromFile(new File("src/manager/testFiles.csv"));
+        Collection<Task> tasks = fbTasksManager2.getTasksList();
+        for (Task line : tasks)
+            System.out.println(line);
+        Collection<Epic> epics = fbTasksManager2.getEpicsList();
+        for (Task line : epics)
+            System.out.println(line);
+        Collection<Subtask> subtasks = fbTasksManager2.getSubtaskList();
+        for (Task line : subtasks)
+            System.out.println(line);
+        fbTasksManager2.getTaskByIdNumber(1);
+        fbTasksManager2.getEpicTaskByIdNumber(3);
+        fbTasksManager2.getSubTaskByIdNumber(5);
+        fbTasksManager2.getSubTaskByIdNumber(6);
+        System.out.println("История просмотров:");
+        for (Task line : fbTasksManager2.getHistory())
+            System.out.println(line);
     }
 
     @Override
