@@ -146,11 +146,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                     newID = task.getId();
                 }
             }
-
+            
+            if (stringList.size() > 1) {
             String history = stringList.get(stringList.size() - 1);
             List<Integer> list = fromString(history);
             for (Integer id : list) {
-                manager.getHistory().add(taskHashMap.get(id));
+                manager.inMemoryHistoryManager.add(taskHashMap.get(id));
+            }
             }
 
             manager.idNumber = newID;
@@ -200,11 +202,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         Collection<Subtask> subtasks = fbTasksManager2.getSubtaskList();
         for (Task line : subtasks)
             System.out.println(line);
-        fbTasksManager2.getTaskByIdNumber(1);
-        fbTasksManager2.getEpicTaskByIdNumber(3);
-        fbTasksManager2.getSubTaskByIdNumber(5);
-        fbTasksManager2.getSubTaskByIdNumber(6);
-        System.out.println("История просмотров:");
+
+       System.out.println("История просмотров:");
         for (Task line : fbTasksManager2.getHistory())
             System.out.println(line);
     }
