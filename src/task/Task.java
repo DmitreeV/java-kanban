@@ -1,5 +1,8 @@
 package task;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
 
     protected int id;
@@ -7,18 +10,51 @@ public class Task {
     protected String description;
     protected TaskStatus status;
     protected TaskType taskType;
+    protected long duration;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
 
-    public Task(String name, TaskType taskType, TaskStatus status, String description) {
+    public Task(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+                long duration) {
         this.taskType = taskType;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+        this.endTime = getEndTime();
     }
 
-    public Task(String name, TaskType taskType, TaskStatus status, String description, int id) {  // конструктор для обновления эпика
+    public Task(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+                long duration, int id) {  // конструктор для обновления эпика
 
-        this(name, taskType, status, description);
+        this(name, taskType, status, description, startTime, duration);
         this.id = id;
+        this.endTime = getEndTime();
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return this.startTime.plusMinutes(this.duration);
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public TaskType getTaskType() {
@@ -65,11 +101,15 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", description='" + description + '\'' +
+                ", startTime=" + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
+                ", duration=" + duration +
+                ", endTime=" + endTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
                 '}';
     }
 
-    public String getDescriptionTask(){
+    public String getDescriptionTask() {
         return getId() + "," + TaskType.TASK + "," + getName() + "," + getStatus() + ","
-                + getDescription();
+                + getDescription() + "," + getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
+                "," + getDuration();
     }
 }

@@ -1,5 +1,7 @@
 package task;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,13 +9,14 @@ public class Epic extends Task {
 
     private List<Integer> subtasks = new ArrayList<>();
 
-    public Epic(String name, TaskType taskType, TaskStatus status, String description) {
-        super(name, taskType, status, description);
+    public Epic(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+                long duration) {
+        super(name, taskType, status, description, startTime, duration);
     }
 
-    public Epic(String name, TaskType taskType, TaskStatus status, String description, int id,
-             List<Integer> subtasks) { // конструктор для обновления эпика
-        super(name, taskType, status, description, id);
+    public Epic(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+                long duration, int id, List<Integer> subtasks) { // конструктор для обновления эпика
+        super(name, taskType, status, description, startTime, duration, id);
         this.subtasks = subtasks;
     }
 
@@ -38,11 +41,16 @@ public class Epic extends Task {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", description='" + description + '\'' +
+                ", startTime=" + getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
+                ", duration=" + duration +
+                ", endTime=" + getEndTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
                 '}';
     }
+
     @Override
-    public String getDescriptionTask(){
+    public String getDescriptionTask() {
         return getId() + "," + TaskType.EPIC + "," + getName() + "," + getStatus() + ","
-                + getDescription();
+                + getDescription() + "," + getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
+                "," + getDuration();
     }
 }
