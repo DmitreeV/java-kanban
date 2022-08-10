@@ -7,17 +7,25 @@ import java.util.List;
 
 public class Epic extends Task {
 
-    private List<Integer> subtasks = new ArrayList<>();
+    protected List<Integer> subtasks = new ArrayList<>();
+
+    protected LocalDateTime endTime;
 
     public Epic(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
                 long duration) {
         super(name, taskType, status, description, startTime, duration);
+        this.endTime = getEndTime();
     }
 
     public Epic(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
                 long duration, int id, List<Integer> subtasks) { // конструктор для обновления эпика
         super(name, taskType, status, description, startTime, duration, id);
         this.subtasks = subtasks;
+        this.endTime = getEndTime();
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public void addIdOfSubtasks(Subtask subtask) {

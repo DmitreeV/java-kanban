@@ -10,6 +10,8 @@ import task.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static task.TaskStatus.*;
@@ -23,6 +25,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     Task secondTask;
     Epic firstEpic;
     Epic secondEpic;
+    Epic thirdEpic;
     Subtask firstSubtask;
     Subtask secondSubtask;
     Subtask thirdSubtask;
@@ -66,10 +69,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 TaskStatus.DONE, "Описание Сабтаск 3",
                 LocalDateTime.of(2015, 6, 14, 11, 30), 40, 4));
         manager.saveSubtask(thirdSubtask);
+
+        thirdEpic = manager.creationEpic(new Epic("Эпик 3", TaskType.EPIC, NEW,
+                "Для теста статусов", LocalDateTime.of(2020, 2, 20, 20, 20),
+                20));
+        manager.saveEpics(thirdEpic);
     }
 
     @Test
     void testSaveTask() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getTaskByIdNumber(1).getName(), firstTask.getName());
@@ -80,14 +91,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getTaskByIdNumber(1).getDuration(), firstTask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getTaskByIdNumber(firstTask.getId()));
+        manager.deleteTasks();
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
     void testSaveEpic() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), firstEpic.getName());
@@ -98,14 +110,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getEpicTaskByIdNumber(3).getDuration(), firstEpic.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(firstEpic.getId()));
+        manager.deleteEpics();
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
     void testSaveSubtask() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getSubTaskByIdNumber(5).getName(), firstSubtask.getName());
@@ -114,16 +127,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getSubTaskByIdNumber(5).getDescription(), firstSubtask.getDescription());
         assertEquals(manager.getSubTaskByIdNumber(5).getStartTime(), firstSubtask.getStartTime());
         assertEquals(manager.getSubTaskByIdNumber(5).getDuration(), firstSubtask.getDuration());
+        //Проверка ID сабтаски
+        assertEquals(manager.getEpicTaskByIdNumber(3).getId(), firstSubtask.getEpicID());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getSubTaskByIdNumber(firstSubtask.getId()));
+        manager.deleteSubtasks();
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testGetTasksList() {
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         List<Task> testList1 = new ArrayList<>(List.of(firstTask, secondTask));
@@ -131,29 +146,29 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(testList1, testList2);
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getTaskByIdNumber(firstTask.getId()));
+        manager.deleteTasks();
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
     void testGetEpicsList() {
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
-        List<Epic> testList1 = new ArrayList<>(List.of(firstEpic, secondEpic));
+        List<Epic> testList1 = new ArrayList<>(List.of(firstEpic, secondEpic, thirdEpic));
         List<Epic> testList2 = manager.getEpicsList();
         assertEquals(testList1, testList2);
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(firstEpic.getId()));
+        manager.deleteEpics();
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
     void testGetSubtaskList() {
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         List<Subtask> testList1 = new ArrayList<>(List.of(firstSubtask, secondSubtask, thirdSubtask));
@@ -161,10 +176,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(testList1, testList2);
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getSubTaskByIdNumber(firstSubtask.getId()));
+        manager.deleteSubtasks();
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
@@ -176,7 +189,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, testList.size());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
@@ -188,7 +201,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, testList.size());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
@@ -200,11 +213,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, testList.size());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testGetTaskByIdNumber() {
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getTaskByIdNumber(2).getName(), secondTask.getName());
@@ -215,14 +230,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getTaskByIdNumber(2).getDuration(), secondTask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getTaskByIdNumber(secondTask.getId()));
+        manager.deleteTasks();
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
     void testGetEpicTaskByIdNumber() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getEpicTaskByIdNumber(4).getName(), secondEpic.getName());
@@ -233,14 +249,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getEpicTaskByIdNumber(4).getDuration(), secondEpic.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(secondEpic.getId()));
+        manager.deleteEpics();
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
     void testGetSubTaskByIdNumber() {
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getSubTaskByIdNumber(6).getName(), secondSubtask.getName());
@@ -251,14 +267,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getSubTaskByIdNumber(6).getDuration(), secondSubtask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getSubTaskByIdNumber(secondSubtask.getId()));
+        manager.deleteSubtasks();
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testCreationTask() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         Task testTask = new Task("Таск 1", TaskType.TASK, NEW,
@@ -274,19 +291,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getTaskByIdNumber(1).getDuration(), testTask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getTaskByIdNumber(firstTask.getId()));
+        manager.deleteTasks();
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
     void testCreationEpic() {
 
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
+
         //a. Со стандартным поведением.
         Epic testEpic = new Epic("Эпик 1", TaskType.EPIC, IN_PROGRESS,
-                "Описание Эпик 1", LocalDateTime.of(2010, 1, 11, 11, 40),
-                90);
+                "Описание Эпик 1", LocalDateTime.of(2001, 9, 11, 10, 20),
+                10);
         manager.creationEpic(testEpic);
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), testEpic.getName());
         assertEquals(manager.getEpicTaskByIdNumber(3).getTaskType(), testEpic.getTaskType());
@@ -296,14 +314,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getEpicTaskByIdNumber(3).getDuration(), testEpic.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(firstEpic.getId()));
+        manager.deleteEpics();
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
     void testCreationSubtask() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         Subtask testSubtask = new Subtask("Сабтаск 1", TaskType.SUBTASK, NEW,
@@ -318,14 +337,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getSubTaskByIdNumber(5).getDuration(), testSubtask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getSubTaskByIdNumber(firstSubtask.getId()));
+        manager.deleteSubtasks();
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testUpdateTask() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         Task testTask = new Task("Таск 1", TaskType.TASK, NEW,
@@ -341,19 +361,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getTaskByIdNumber(1).getDuration(), testTask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getTaskByIdNumber(firstTask.getId()));
+        manager.deleteTasks();
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
     void testUpdateEpic() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
+
         List<Integer> list = new ArrayList<>();
         //a. Со стандартным поведением.
         Epic testEpic = new Epic("Эпик 1", TaskType.EPIC, IN_PROGRESS,
                 "Описание Эпик 1", LocalDateTime.of(2001, 9, 11, 10, 20),
-                10,3, list);
+                10, 3, list);
         manager.updateEpic(testEpic);
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), testEpic.getName());
         assertEquals(manager.getEpicTaskByIdNumber(3).getTaskType(), testEpic.getTaskType());
@@ -363,14 +385,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getEpicTaskByIdNumber(3).getDuration(), testEpic.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(firstEpic.getId()));
+        manager.deleteEpics();
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
     void testUpdateSubtask() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         Subtask testSubtask = new Subtask("Сабтаск 1", TaskType.SUBTASK, NEW,
@@ -385,18 +408,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getSubTaskByIdNumber(5).getDuration(), testSubtask.getDuration());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getSubTaskByIdNumber(firstSubtask.getId()));
+        manager.deleteSubtasks();
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testDeleteTaskById() {
 
         //c. С неверным идентификатором задачи
-        assertNotNull(manager.getTaskByIdNumber(firstTask.getId()));
-        assertNotNull(manager.getTaskByIdNumber(secondTask.getId()));
+        assertThrows(NullPointerException.class, () -> manager.deleteTaskById(10));
 
         //a. Со стандартным поведением.
         manager.deleteTaskById(1);
@@ -404,31 +424,28 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, manager.getTasksList().size());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getTasksList());
+        assertTrue(manager.getTasksList().isEmpty());
     }
 
     @Test
     void testDeleteEpicById() {
 
         //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(firstEpic.getId()));
-        assertNotNull(manager.getEpicTaskByIdNumber(secondEpic.getId()));
+        assertThrows(NullPointerException.class, () -> manager.deleteEpicById(20));
 
         //a. Со стандартным поведением.
-        manager.deleteEpicById(3);
-        manager.deleteEpicById(4);
+        manager.deleteEpics();
         assertEquals(0, manager.getEpicsList().size());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getEpicsList());
+        assertTrue(manager.getEpicsList().isEmpty());
     }
 
     @Test
     void testDeleteSubtaskById() {
 
         //c. С неверным идентификатором задачи
-        assertNotNull(manager.getSubTaskByIdNumber(firstSubtask.getId()));
-        assertNotNull(manager.getSubTaskByIdNumber(secondSubtask.getId()));
+        assertThrows(NullPointerException.class, () -> manager.deleteSubtaskById(10));
 
         //a. Со стандартным поведением.
         manager.deleteSubtaskById(firstSubtask.getId());
@@ -437,53 +454,147 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, manager.getSubtaskList().size());
 
         //b. С пустым списком задач.
-        assertNotNull(manager.getSubtaskList());
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testSubtaskList() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(firstEpic.getId(), firstSubtask.getEpicID());
         assertEquals(firstEpic.getId(), secondSubtask.getEpicID());
 
         //b. С пустым списком задач.
-        assertNotNull(firstEpic.getSubtasks());
-
-        //c. С неверным идентификатором задачи
-        assertNotNull(manager.getEpicTaskByIdNumber(firstEpic.getId()));
-        assertNotNull(manager.getSubTaskByIdNumber(firstSubtask.getId()));
+        manager.deleteSubtasks();
+        assertEquals(0, manager.getSubtaskList().size());
     }
 
     @Test
-    void testChangeEpicStatus() {
+    void testChangeEpicStatusAllSubtaskStatusNew() {
+        //b. Все подзадачи со статусом NEW
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+                NEW, "Описание Саб 1",
+                LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub1);
+
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+                NEW, "Описание Саб 2",
+                LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub2);
+
+        assertEquals(NEW, manager.getEpicTaskByIdNumber(8).getStatus());
 
         //a. Пустой список подзадач
-        assertNotNull(manager.getSubtaskList());
+        manager.deleteSubtasks();
+        assertEquals(0, manager.getSubtaskList().size());
+    }
 
-        //b. Все подзадачи со статусом NEW
-        secondSubtask.setStatus(NEW);
-        firstSubtask.setStatus(NEW);
-        assertEquals(IN_PROGRESS, manager.getEpicTaskByIdNumber(3).getStatus());
-
+    @Test
+    void testChangeEpicStatusAllSubtaskStatusDone() {
         //c. Все подзадачи со статусом DONE
-        assertEquals(DONE, manager.getEpicTaskByIdNumber(4).getStatus());
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+                DONE, "Описание Саб 1",
+                LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub1);
 
-        //d. Подзадачи со статусами NEW и DONE
-        secondSubtask.setStatus(NEW);
-        firstSubtask.setStatus(DONE);
-        assertEquals(IN_PROGRESS, manager.getEpicTaskByIdNumber(3).getStatus());
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+                DONE, "Описание Саб 2",
+                LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub2);
 
-        //e. Подзадачи со статусом IN_PROGRESS
-        secondSubtask.setStatus(IN_PROGRESS);
-        firstSubtask.setStatus(IN_PROGRESS);
-        assertEquals(IN_PROGRESS, manager.getEpicTaskByIdNumber(3).getStatus());
+        assertEquals(DONE, manager.getEpicTaskByIdNumber(8).getStatus());
+
+        //a. Пустой список подзадач
+        manager.deleteSubtasks();
+        assertEquals(0, manager.getSubtaskList().size());
+    }
+
+    @Test
+    void testChangeEpicStatusSubtaskStatusDoneNew() {
+        //d. Подзадачи со статусом DONE и NEW
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+                DONE, "Описание Саб 1",
+                LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub1);
+
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+                NEW, "Описание Саб 2",
+                LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub2);
+
+        assertEquals(IN_PROGRESS, manager.getEpicTaskByIdNumber(8).getStatus());
+
+        //a. Пустой список подзадач
+        manager.deleteSubtasks();
+        assertEquals(0, manager.getSubtaskList().size());
+    }
+
+    @Test
+    void testChangeEpicStatusAllSubtaskStatusInProgress() {
+        //b. Все подзадачи со статусом IN_PROGRESS
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+                IN_PROGRESS, "Описание Саб 1",
+                LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub1);
+
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+                IN_PROGRESS, "Описание Саб 2",
+                LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
+        manager.saveSubtask(sub2);
+
+        assertEquals(IN_PROGRESS, manager.getEpicTaskByIdNumber(8).getStatus());
+
+        //a. Пустой список подзадач
+        manager.deleteSubtasks();
+        assertEquals(0, manager.getSubtaskList().size());
+    }
+
+    @Test
+    void testGetPrioritizedTasks() {
+
+        //c. С неверным идентификатором задачи
+        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
+        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(11));
+        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(12));
+
+        //a. Со стандартным поведением.
+        Set<Task> expected = new TreeSet<>((o1, o2) -> {
+            if ((o1.getStartTime() != null) && (o2.getStartTime() != null)) {
+                return o1.getStartTime().compareTo(o2.getStartTime());
+            } else if (o1.getStartTime() == null) {
+                return 1;
+            } else if (o2.getStartTime() == null) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+        expected.addAll(manager.getTasksList());
+        expected.addAll(manager.getSubtaskList());
+
+        Set<Task> actual = manager.getterPrioritizedTasks();
+
+        assertEquals(expected, actual);
+
+        //b. С пустым списком задач.
+        manager.deleteTasks();
+        manager.deleteEpics();
+        manager.deleteSubtasks();
+        assertTrue(manager.getTasksList().isEmpty());
+        assertTrue(manager.getEpicsList().isEmpty());
+        assertTrue(manager.getSubtaskList().isEmpty());
     }
 
     @Test
     void testGetHistory() {
 
         historyManager = new InMemoryHistoryManager();
+
+        //a. Пустая история задач
+        assertTrue(historyManager.getHistory().isEmpty());
 
         historyManager.add(firstTask);
         historyManager.add(secondTask);
@@ -492,17 +603,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         historyManager.add(firstSubtask);
         historyManager.add(thirdSubtask);
 
-        //a. Пустая история задач
-        assertNotNull(historyManager.getHistory());
-
         //b. Дублирование
-        assertEquals(5,historyManager.getHistory().size());
+        assertEquals(5, historyManager.getHistory().size());
 
         //с. Удаление из истории: начало, середина, конец
         historyManager.remove(1);
         historyManager.remove(3);
         historyManager.remove(7);
 
-        assertEquals(2,historyManager.getHistory().size());
+        assertEquals(2, historyManager.getHistory().size());
     }
 }

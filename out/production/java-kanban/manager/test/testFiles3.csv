@@ -1,0 +1,5 @@
+id,type,name,status,description,startTime,duration,epic
+1,TASK,Тестовая таска,NEW,Описание,08.08.2022 21:33,20
+2,EPIC,Тестовый эпик,NEW,Описание,08.08.2022 21:13,10
+3,SUBTASK,Тестовая сабтаска,NEW,Описание,08.08.2022 21:13,10,2
+

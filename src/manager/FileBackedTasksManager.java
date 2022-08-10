@@ -155,13 +155,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
 
             if (stringList.size() > 1) {
-            String history = stringList.get(stringList.size() - 1);
-            if(!history.isEmpty()){
-            List<Integer> list = fromString(history);
-            for (Integer id : list) {
-                manager.inMemoryHistoryManager.add(taskHashMap.get(id));
-            }
-            }
+                String history = stringList.get(stringList.size() - 1);
+                if (!history.isEmpty()) {
+                    List<Integer> list = fromString(history);
+                    for (Integer id : list) {
+                        manager.inMemoryHistoryManager.add(taskHashMap.get(id));
+                    }
+                }
             }
 
             manager.idNumber = newID;
@@ -188,10 +188,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 "Приготовить ужин для всей семьи",LocalDateTime.now().plusMinutes(30), 35));
 
         fbTasksManager.saveEpics(new Epic("Купить продукты", TaskType.EPIC, TaskStatus.DONE,
-                "Купить всё и ничего не забыть",LocalDateTime.now().minusMinutes(30), 20));
+                "Купить всё и ничего не забыть",LocalDateTime.of(2000,3,30,
+                10,20), 10));
 
         fbTasksManager.saveSubtask(new Subtask("Купить вино", TaskType.SUBTASK, TaskStatus.DONE,
-                "Вино белое полусладкое",LocalDateTime.now().plusMinutes(30), 25, 3));
+                "Вино белое полусладкое",LocalDateTime.of(2016,7,1,10,20), 40, 3));
 
         fbTasksManager.saveSubtask(new Subtask("Найденная сабтаска", TaskType.SUBTASK, TaskStatus.DONE,
                 "Эта сабтаска читается",LocalDateTime.of(2015,6,1,10,20), 40, 3));

@@ -6,6 +6,7 @@ import task.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -61,4 +62,6 @@ public interface TaskManager {
     Epic creationEpic(Epic epic);
 
     Subtask creationSubtask(Subtask subtask);
+
+    Set<Task> getterPrioritizedTasks();
 }

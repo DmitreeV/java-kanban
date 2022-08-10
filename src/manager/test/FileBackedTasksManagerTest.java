@@ -18,7 +18,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
         //a. Со стандартным поведением.
         FileBackedTasksManager standartManager = FileBackedTasksManager.loadFromFile(new File(
-                "src/manager/testFiles.csv"));
+                "src/manager/test/testFiles.csv"));
 
         assertEquals(2, standartManager.getEpicsList().size());
         assertEquals(2, standartManager.getTasksList().size());
@@ -30,7 +30,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     public void testLoadWithEmptyEpicAndSubtaskList() {
         //a. Пустой список Epic и Subtask задач.
         FileBackedTasksManager managerWithEmptyEpicsList = FileBackedTasksManager.loadFromFile(new File(
-                "src/manager/testFiles2.csv"));
+                "src/manager/test/testFiles2.csv"));
 
         assertEquals(0, managerWithEmptyEpicsList.getEpicsList().size());
         assertEquals(1, managerWithEmptyEpicsList.getTasksList().size());
@@ -41,7 +41,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     public void testLoadWithEmptyAllTasksList() {
         //a. Пустой список задач.
         FileBackedTasksManager managerWithEmptyAllTasksList = FileBackedTasksManager.loadFromFile(new File(
-                "src/manager/testFiles1.csv"));
+                "src/manager/test/testFiles1.csv"));
 
         assertEquals(0, managerWithEmptyAllTasksList.getEpicsList().size());
         assertEquals(0, managerWithEmptyAllTasksList.getTasksList().size());
@@ -52,7 +52,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     public void testLoadWithEmptyHistory() {
         //c. Пустой список истории.
         FileBackedTasksManager managerWithEmptyHistoryList = FileBackedTasksManager.loadFromFile(new File(
-                "src/manager/testFiles3.csv"));
+                "src/manager/test/testFiles3.csv"));
 
         assertEquals(1, managerWithEmptyHistoryList.getEpicsList().size());
         assertEquals(1, managerWithEmptyHistoryList.getTasksList().size());

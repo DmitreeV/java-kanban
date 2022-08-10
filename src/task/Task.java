@@ -12,7 +12,6 @@ public class Task {
     protected TaskType taskType;
     protected long duration;
     protected LocalDateTime startTime;
-    protected LocalDateTime endTime;
 
     public Task(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
                 long duration) {
@@ -22,7 +21,6 @@ public class Task {
         this.status = status;
         this.duration = duration;
         this.startTime = startTime;
-        this.endTime = getEndTime();
     }
 
     public Task(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
@@ -30,7 +28,6 @@ public class Task {
 
         this(name, taskType, status, description, startTime, duration);
         this.id = id;
-        this.endTime = getEndTime();
     }
 
     public long getDuration() {
@@ -51,10 +48,6 @@ public class Task {
 
     public LocalDateTime getEndTime() {
         return this.startTime.plusMinutes(this.duration);
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
     }
 
     public TaskType getTaskType() {
@@ -103,7 +96,7 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", startTime=" + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
                 ", duration=" + duration +
-                ", endTime=" + endTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 
