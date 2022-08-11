@@ -13,9 +13,9 @@ public class Task {
     protected long duration;
     protected LocalDateTime startTime;
 
-    public Task(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+    public Task(String name, TaskStatus status, String description, LocalDateTime startTime,
                 long duration) {
-        this.taskType = taskType;
+        this.taskType = TaskType.TASK;
         this.name = name;
         this.description = description;
         this.status = status;
@@ -23,10 +23,10 @@ public class Task {
         this.startTime = startTime;
     }
 
-    public Task(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+    public Task(String name, TaskStatus status, String description, LocalDateTime startTime,
                 long duration, int id) {  // конструктор для обновления эпика
-
-        this(name, taskType, status, description, startTime, duration);
+        this(name, status, description, startTime, duration);
+        this.taskType = TaskType.TASK;
         this.id = id;
     }
 

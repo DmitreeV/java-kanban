@@ -14,11 +14,11 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
-    private static final String topString = "id,type,name,status,description,startTime,duration,epic";
+    private static final String TOP_STRING = "id,type,name,status,description,startTime,duration,epic";
 
     private final File file;
 
-    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public FileBackedTasksManager(File file) {
         super();
@@ -29,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
 
-            bufferedWriter.write(topString + "\n");
+            bufferedWriter.write(TOP_STRING + "\n");
 
             for (Task task : getTasksList()) {
                 bufferedWriter.write(toStringTask(task) + "\n");
@@ -64,21 +64,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         TaskStatus taskStatus = TaskStatus.valueOf(arTask[3]);
         String name = arTask[2];
         String description = arTask[4];
-        LocalDateTime startTime = LocalDateTime.parse(arTask[5], formatter);
+        LocalDateTime startTime = LocalDateTime.parse(arTask[5], FORMATTER);
         long duration = Long.parseLong(arTask[6]);
         Task task = null;
 
         switch (taskType) {
             case TASK:
-                task = new Task(name, taskType, taskStatus, description, startTime, duration);
+                task = new Task(name, taskStatus, description, startTime, duration);
                 break;
 
             case EPIC:
-                task = new Epic(name, taskType, taskStatus, description, startTime, duration);
+                task = new Epic(name, taskStatus, description, startTime, duration);
                 break;
 
             case SUBTASK:
-                task = new Subtask(name, taskType, taskStatus, description, startTime, duration,
+                task = new Subtask(name, taskStatus, description, startTime, duration,
                         Integer.parseInt(arTask[7]));
                 break;
         }
@@ -178,23 +178,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         File testFile = new File("src/manager/testFiles.csv");
         FileBackedTasksManager fbTasksManager = new FileBackedTasksManager(testFile);
 
-        fbTasksManager.saveTask(new Task("Погулять с собакой", TaskType.TASK, TaskStatus.NEW,
+        fbTasksManager.saveTask(new Task("Погулять с собакой", TaskStatus.NEW,
                 "Погулять с собакой час", LocalDateTime.now().minusMinutes(30), 20));
 
-        fbTasksManager.saveTask(new Task("Пойти в бассейн", TaskType.TASK, TaskStatus.NEW,
+        fbTasksManager.saveTask(new Task("Пойти в бассейн", TaskStatus.NEW,
                 "Хорошо поплавать",LocalDateTime.of(2000,5,5,10,20), 10));
 
-        fbTasksManager.saveEpics(new Epic("Приготовить ужин", TaskType.EPIC, TaskStatus.NEW,
+        fbTasksManager.saveEpic(new Epic("Приготовить ужин", TaskStatus.NEW,
                 "Приготовить ужин для всей семьи",LocalDateTime.now().plusMinutes(30), 35));
 
-        fbTasksManager.saveEpics(new Epic("Купить продукты", TaskType.EPIC, TaskStatus.DONE,
+        fbTasksManager.saveEpic(new Epic("Купить продукты", TaskStatus.DONE,
                 "Купить всё и ничего не забыть",LocalDateTime.of(2000,3,30,
                 10,20), 10));
 
-        fbTasksManager.saveSubtask(new Subtask("Купить вино", TaskType.SUBTASK, TaskStatus.DONE,
+        fbTasksManager.saveSubtask(new Subtask("Купить вино", TaskStatus.DONE,
                 "Вино белое полусладкое",LocalDateTime.of(2016,7,1,10,20), 40, 3));
 
-        fbTasksManager.saveSubtask(new Subtask("Найденная сабтаска", TaskType.SUBTASK, TaskStatus.DONE,
+        fbTasksManager.saveSubtask(new Subtask("Найденная сабтаска", TaskStatus.DONE,
                 "Эта сабтаска читается",LocalDateTime.of(2015,6,1,10,20), 40, 3));
 
         fbTasksManager.getTaskByIdNumber(1);
@@ -220,7 +220,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         File testFile1 = new File("src/manager/testFiles2.csv");
         FileBackedTasksManager fbTasksManager1 = new FileBackedTasksManager(testFile1);
 
-        fbTasksManager1.saveTask(new Task("Тестовая таска", TaskType.TASK, TaskStatus.NEW,
+        fbTasksManager1.saveTask(new Task("Тестовая таска", TaskStatus.NEW,
                 "Описание", LocalDateTime.now().minusMinutes(30), 20));
 
         fbTasksManager1.getTaskByIdNumber(1);
@@ -228,11 +228,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         File testFile3 = new File("src/manager/testFiles3.csv");
         FileBackedTasksManager fbTasksManager3 = new FileBackedTasksManager(testFile3);
 
-        fbTasksManager3.saveTask(new Task("Тестовая таска", TaskType.TASK, TaskStatus.NEW,
+        fbTasksManager3.saveTask(new Task("Тестовая таска", TaskStatus.NEW,
                 "Описание", LocalDateTime.now().minusMinutes(30), 20));
-        fbTasksManager3.saveEpics(new Epic("Тестовый эпик", TaskType.EPIC, TaskStatus.NEW,
+        fbTasksManager3.saveEpic(new Epic("Тестовый эпик", TaskStatus.NEW,
                 "Описание", LocalDateTime.now().minusMinutes(40), 40));
-        fbTasksManager3.saveSubtask(new Subtask("Тестовая сабтаска", TaskType.SUBTASK, TaskStatus.NEW,
+        fbTasksManager3.saveSubtask(new Subtask("Тестовая сабтаска", TaskStatus.NEW,
                 "Описание", LocalDateTime.now().minusMinutes(50), 10,2));
     }
 
@@ -243,8 +243,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void saveEpics(Epic epic) {
-        super.saveEpics(epic);
+    public void saveEpic(Epic epic) {
+        super.saveEpic(epic);
         save();
     }
 

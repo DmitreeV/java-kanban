@@ -13,7 +13,7 @@ public interface TaskManager {
     // 1. Сохранение задач
     void saveTask(Task task);
 
-    void saveEpics(Epic epic);
+    void saveEpic(Epic epic);
 
     void saveSubtask(Subtask subtask);
 

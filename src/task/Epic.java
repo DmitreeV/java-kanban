@@ -11,15 +11,17 @@ public class Epic extends Task {
 
     protected LocalDateTime endTime;
 
-    public Epic(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+    public Epic(String name, TaskStatus status, String description, LocalDateTime startTime,
                 long duration) {
-        super(name, taskType, status, description, startTime, duration);
+        super(name, status, description, startTime, duration);
+        this.taskType = TaskType.EPIC;
         this.endTime = getEndTime();
     }
 
-    public Epic(String name, TaskType taskType, TaskStatus status, String description, LocalDateTime startTime,
+    public Epic(String name, TaskStatus status, String description, LocalDateTime startTime,
                 long duration, int id, List<Integer> subtasks) { // конструктор для обновления эпика
-        super(name, taskType, status, description, startTime, duration, id);
+        super(name, status, description, startTime, duration, id);
+        this.taskType = TaskType.EPIC;
         this.subtasks = subtasks;
         this.endTime = getEndTime();
     }

@@ -5,12 +5,10 @@ public class ManagerSaveException extends RuntimeException {
         super(message, cause);
     }
 
-    @Override
     public Throwable getCause(){
         return super.getCause();
     }
 
-    @Override
     public String getMessage() {
         return super.getMessage();
     }

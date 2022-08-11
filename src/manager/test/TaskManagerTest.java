@@ -36,51 +36,48 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         manager = createTaskManager();
 
-        firstTask = manager.creationTask(new Task("Таск 1", TaskType.TASK, NEW,
+        firstTask = manager.creationTask(new Task("Таск 1", NEW,
                 "Описание Таск 1", LocalDateTime.of(2000, 5, 5, 10, 20),
                 10));
         manager.saveTask(firstTask);
 
-        secondTask = manager.creationTask(new Task("Таск 2", TaskType.TASK, NEW,
+        secondTask = manager.creationTask(new Task("Таск 2", NEW,
                 "Описание Таск 2", LocalDateTime.of(2000, 6, 10, 11, 25),
                 50));
         manager.saveTask(secondTask);
 
-        firstEpic = manager.creationEpic(new Epic("Эпик 1", TaskType.EPIC, TaskStatus.NEW,
+        firstEpic = manager.creationEpic(new Epic("Эпик 1", TaskStatus.NEW,
                 "Описание Эпик 1", LocalDateTime.of(2001, 9, 11, 10, 20),
                 10));
-        manager.saveEpics(firstEpic);
+        manager.saveEpic(firstEpic);
 
-        secondEpic = manager.creationEpic(new Epic("Эпик 2", TaskType.EPIC, TaskStatus.NEW,
+        secondEpic = manager.creationEpic(new Epic("Эпик 2", TaskStatus.NEW,
                 "Описание Эпик 2", LocalDateTime.now().minusMinutes(30), 20));
-        manager.saveEpics(secondEpic);
+        manager.saveEpic(secondEpic);
 
-        firstSubtask = manager.creationSubtask(new Subtask("Сабтаск 1", TaskType.SUBTASK, NEW,
+        firstSubtask = manager.creationSubtask(new Subtask("Сабтаск 1", NEW,
                 "Описание Сабтаск 1", LocalDateTime.of(2010, 1, 11, 11, 40),
                 50, 3));
         manager.saveSubtask(firstSubtask);
 
-        secondSubtask = manager.creationSubtask(new Subtask("Сабтаск 2", TaskType.SUBTASK,
+        secondSubtask = manager.creationSubtask(new Subtask("Сабтаск 2",
                 TaskStatus.DONE, "Описание Сабтаск 2", LocalDateTime.now().minusMinutes(30), 40,
                 3));
         manager.saveSubtask(secondSubtask);
 
-        thirdSubtask = manager.creationSubtask(new Subtask("Сабтаск 3", TaskType.SUBTASK,
+        thirdSubtask = manager.creationSubtask(new Subtask("Сабтаск 3",
                 TaskStatus.DONE, "Описание Сабтаск 3",
                 LocalDateTime.of(2015, 6, 14, 11, 30), 40, 4));
         manager.saveSubtask(thirdSubtask);
 
-        thirdEpic = manager.creationEpic(new Epic("Эпик 3", TaskType.EPIC, NEW,
+        thirdEpic = manager.creationEpic(new Epic("Эпик 3", NEW,
                 "Для теста статусов", LocalDateTime.of(2020, 2, 20, 20, 20),
                 20));
-        manager.saveEpics(thirdEpic);
+        manager.saveEpic(thirdEpic);
     }
 
     @Test
     void testSaveTask() {
-
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getTaskByIdNumber(1).getName(), firstTask.getName());
@@ -98,9 +95,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testSaveEpic() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), firstEpic.getName());
         assertEquals(manager.getEpicTaskByIdNumber(3).getTaskType(), firstEpic.getTaskType());
@@ -117,9 +111,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testSaveSubtask() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
         assertEquals(manager.getSubTaskByIdNumber(5).getName(), firstSubtask.getName());
         assertEquals(manager.getSubTaskByIdNumber(5).getTaskType(), firstSubtask.getTaskType());
@@ -127,8 +118,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getSubTaskByIdNumber(5).getDescription(), firstSubtask.getDescription());
         assertEquals(manager.getSubTaskByIdNumber(5).getStartTime(), firstSubtask.getStartTime());
         assertEquals(manager.getSubTaskByIdNumber(5).getDuration(), firstSubtask.getDuration());
+
         //Проверка ID сабтаски
         assertEquals(manager.getEpicTaskByIdNumber(3).getId(), firstSubtask.getEpicID());
+
+        //Проверка статуса и временных параметров эпика относительно сабтаски
+        Subtask testSubtask = new Subtask("Саб таск ", NEW,
+                "Описание Саб таск ", LocalDateTime.of(2020, 2, 20, 20, 20),
+                50, 8);
+        manager.saveSubtask(testSubtask);
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStatus(), testSubtask.getStatus());
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStartTime(), testSubtask.getStartTime());
+        assertEquals(manager.getEpicTaskByIdNumber(8).getDuration(), testSubtask.getDuration());
 
         //b. С пустым списком задач.
         manager.deleteSubtasks();
@@ -137,8 +138,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetTasksList() {
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         List<Task> testList1 = new ArrayList<>(List.of(firstTask, secondTask));
@@ -152,8 +151,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetEpicsList() {
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         List<Epic> testList1 = new ArrayList<>(List.of(firstEpic, secondEpic, thirdEpic));
@@ -167,8 +164,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetSubtaskList() {
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         List<Subtask> testList1 = new ArrayList<>(List.of(firstSubtask, secondSubtask, thirdSubtask));
@@ -212,6 +207,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
         List<Subtask> testList = manager.getSubtaskList();
         assertEquals(0, testList.size());
 
+        //Проверка статуса эпика относительно сабтаски (после удаления)
+        assertEquals(manager.getEpicTaskByIdNumber(3).getStatus(), NEW);
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStatus(), NEW);
+
         //b. С пустым списком задач.
         assertTrue(manager.getSubtaskList().isEmpty());
     }
@@ -219,7 +218,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetTaskByIdNumber() {
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
+        assertNull(manager.getTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getTaskByIdNumber(2).getName(), secondTask.getName());
@@ -238,7 +237,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void testGetEpicTaskByIdNumber() {
 
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
+        assertNull(manager.getEpicTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getEpicTaskByIdNumber(4).getName(), secondEpic.getName());
@@ -256,7 +255,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetSubTaskByIdNumber() {
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
+        assertNull(manager.getSubTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(manager.getSubTaskByIdNumber(6).getName(), secondSubtask.getName());
@@ -274,13 +273,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testCreationTask() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
-        Task testTask = new Task("Таск 1", TaskType.TASK, NEW,
+        Task testTask = new Task("Таск 1", NEW,
                 "Описание Таск 1", LocalDateTime.of(2000, 5, 5, 10, 20),
-                10L, 1);
+                10, 1);
         manager.creationTask(testTask);
         assertEquals(manager.getTaskByIdNumber(1).getId(), testTask.getId());
         assertEquals(manager.getTaskByIdNumber(1).getName(), testTask.getName());
@@ -298,13 +294,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testCreationEpic() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
-        Epic testEpic = new Epic("Эпик 1", TaskType.EPIC, IN_PROGRESS,
-                "Описание Эпик 1", LocalDateTime.of(2001, 9, 11, 10, 20),
-                10);
+        Epic testEpic = new Epic("Эпик 1", IN_PROGRESS,
+                "Описание Эпик 1", LocalDateTime.of(2010, 1, 11, 11, 40),
+                90);
         manager.creationEpic(testEpic);
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), testEpic.getName());
         assertEquals(manager.getEpicTaskByIdNumber(3).getTaskType(), testEpic.getTaskType());
@@ -321,11 +314,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testCreationSubtask() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
-        Subtask testSubtask = new Subtask("Сабтаск 1", TaskType.SUBTASK, NEW,
+        Subtask testSubtask = new Subtask("Сабтаск 1", NEW,
                 "Описание Сабтаск 1", LocalDateTime.of(2010, 1, 11, 11, 40),
                 50, 3);
         manager.creationSubtask(testSubtask);
@@ -336,6 +326,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getSubTaskByIdNumber(5).getStartTime(), testSubtask.getStartTime());
         assertEquals(manager.getSubTaskByIdNumber(5).getDuration(), testSubtask.getDuration());
 
+        //Проверка статуса и временных параметров эпика относительно сабтаски
+        Subtask testSubtask1 = new Subtask("Саб таск ", NEW,
+                "Описание Саб таск ", LocalDateTime.of(2020, 2, 20, 20, 20),
+                50, 8);
+        manager.saveSubtask(testSubtask1);
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStatus(), testSubtask1.getStatus());
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStartTime(), testSubtask1.getStartTime());
+        assertEquals(manager.getEpicTaskByIdNumber(8).getDuration(), testSubtask1.getDuration());
+
         //b. С пустым списком задач.
         manager.deleteSubtasks();
         assertTrue(manager.getSubtaskList().isEmpty());
@@ -344,11 +343,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testUpdateTask() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
-        Task testTask = new Task("Таск 1", TaskType.TASK, NEW,
+        Task testTask = new Task("Таск 1", NEW,
                 "Описание Таск 1", LocalDateTime.of(2000, 5, 5, 10, 20),
                 10L, 1);
         manager.updateTask(testTask);
@@ -368,14 +364,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testUpdateEpic() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(10));
-
         List<Integer> list = new ArrayList<>();
         //a. Со стандартным поведением.
-        Epic testEpic = new Epic("Эпик 1", TaskType.EPIC, IN_PROGRESS,
-                "Описание Эпик 1", LocalDateTime.of(2001, 9, 11, 10, 20),
-                10, 3, list);
+        Epic testEpic = new Epic("Эпик 1", IN_PROGRESS,
+                "Описание Эпик 1", LocalDateTime.of(2010, 1, 11, 11, 40),
+                90, 3, list);
         manager.updateEpic(testEpic);
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), testEpic.getName());
         assertEquals(manager.getEpicTaskByIdNumber(3).getTaskType(), testEpic.getTaskType());
@@ -392,20 +385,23 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testUpdateSubtask() {
 
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
-
         //a. Со стандартным поведением.
-        Subtask testSubtask = new Subtask("Сабтаск 1", TaskType.SUBTASK, NEW,
+        Subtask testSubtask = new Subtask("Сабтаск 1", DONE,
                 "Описание Сабтаск 1", LocalDateTime.of(2010, 1, 11, 11, 40),
                 50, 3);
         manager.updateSubtask(testSubtask);
         assertEquals(manager.getSubTaskByIdNumber(5).getName(), testSubtask.getName());
         assertEquals(manager.getSubTaskByIdNumber(5).getTaskType(), testSubtask.getTaskType());
-        assertEquals(manager.getSubTaskByIdNumber(5).getStatus(), testSubtask.getStatus());
         assertEquals(manager.getSubTaskByIdNumber(5).getDescription(), testSubtask.getDescription());
-        assertEquals(manager.getSubTaskByIdNumber(5).getStartTime(), testSubtask.getStartTime());
-        assertEquals(manager.getSubTaskByIdNumber(5).getDuration(), testSubtask.getDuration());
+
+        //Проверка статуса и временных параметров эпика относительно сабтаски
+        Subtask testSubtask1 = new Subtask("Саб таск ", NEW,
+                "Описание Саб таск ", LocalDateTime.of(2020, 2, 20, 20, 20),
+                50, 8);
+        manager.saveSubtask(testSubtask1);
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStatus(), testSubtask1.getStatus());
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStartTime(), testSubtask1.getStartTime());
+        assertEquals(manager.getEpicTaskByIdNumber(8).getDuration(), testSubtask1.getDuration());
 
         //b. С пустым списком задач.
         manager.deleteSubtasks();
@@ -416,7 +412,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteTaskById() {
 
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.deleteTaskById(10));
+        manager.deleteTaskById(10);
+        assertEquals(2, manager.getTasksList().size());
 
         //a. Со стандартным поведением.
         manager.deleteTaskById(1);
@@ -431,7 +428,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteEpicById() {
 
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.deleteEpicById(20));
+        manager.deleteEpicById(10);
+        assertEquals(3, manager.getEpicsList().size());
 
         //a. Со стандартным поведением.
         manager.deleteEpics();
@@ -445,13 +443,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteSubtaskById() {
 
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.deleteSubtaskById(10));
+        manager.deleteSubtaskById(10);
+        assertEquals(3, manager.getSubtaskList().size());
 
         //a. Со стандартным поведением.
         manager.deleteSubtaskById(firstSubtask.getId());
         manager.deleteSubtaskById(secondSubtask.getId());
         manager.deleteSubtaskById(thirdSubtask.getId());
         assertEquals(0, manager.getSubtaskList().size());
+
+        //Проверка статуса эпика относительно сабтаски (после удаления)
+        assertEquals(manager.getEpicTaskByIdNumber(3).getStatus(), NEW);
+        assertEquals(manager.getEpicTaskByIdNumber(8).getStatus(), NEW);
 
         //b. С пустым списком задач.
         assertTrue(manager.getSubtaskList().isEmpty());
@@ -461,7 +464,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void testSubtaskList() {
 
         //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(10));
+        assertNull(manager.getEpicTaskByIdNumber(10));
 
         //a. Со стандартным поведением.
         assertEquals(firstEpic.getId(), firstSubtask.getEpicID());
@@ -475,12 +478,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testChangeEpicStatusAllSubtaskStatusNew() {
         //b. Все подзадачи со статусом NEW
-        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 NEW, "Описание Саб 1",
                 LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub1);
 
-        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2",
                 NEW, "Описание Саб 2",
                 LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub2);
@@ -495,12 +498,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testChangeEpicStatusAllSubtaskStatusDone() {
         //c. Все подзадачи со статусом DONE
-        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 DONE, "Описание Саб 1",
                 LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub1);
 
-        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2",
                 DONE, "Описание Саб 2",
                 LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub2);
@@ -515,12 +518,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testChangeEpicStatusSubtaskStatusDoneNew() {
         //d. Подзадачи со статусом DONE и NEW
-        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 DONE, "Описание Саб 1",
                 LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub1);
 
-        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2",
                 NEW, "Описание Саб 2",
                 LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub2);
@@ -535,12 +538,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testChangeEpicStatusAllSubtaskStatusInProgress() {
         //b. Все подзадачи со статусом IN_PROGRESS
-        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1", TaskType.SUBTASK,
+        Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 IN_PROGRESS, "Описание Саб 1",
                 LocalDateTime.of(2017, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub1);
 
-        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2", TaskType.SUBTASK,
+        Subtask sub2 = manager.creationSubtask(new Subtask("Саб 2",
                 IN_PROGRESS, "Описание Саб 2",
                 LocalDateTime.of(2016, 7, 18, 11, 30), 40, 8));
         manager.saveSubtask(sub2);
@@ -554,11 +557,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetPrioritizedTasks() {
-
-        //c. С неверным идентификатором задачи
-        assertThrows(NullPointerException.class, () -> manager.getTaskByIdNumber(10));
-        assertThrows(NullPointerException.class, () -> manager.getEpicTaskByIdNumber(11));
-        assertThrows(NullPointerException.class, () -> manager.getSubTaskByIdNumber(12));
 
         //a. Со стандартным поведением.
         Set<Task> expected = new TreeSet<>((o1, o2) -> {
