@@ -27,6 +27,10 @@ public class HttpTaskServer {
             .serializeNulls()
             .create();
 
+    public Gson getGson() {
+        return gson;
+    }
+
     public HttpTaskServer() throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TaskHandler());

@@ -1,34 +1,34 @@
 package manager;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import servers.KVTaskClient;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-public class HttpTaskManager extends FileBackedTasksManager {
-    private KVTaskClient kvTaskClient;
+public class HTTPTaskManager extends FileBackedTasksManager {
+    private final KVTaskClient kvTaskClient;
     private final Gson gson = new Gson();
 
-    public HttpTaskManager(String url, HistoryManager historyManager) {
-        this(url, historyManager, false);
-    }
-    public HttpTaskManager(String url, HistoryManager historyManager, boolean isLoadNeeded) {
-        super(historyManager, null);
+    public HTTPTaskManager(String url) {
+        super(null);
         this.kvTaskClient = new KVTaskClient(url);
-        if (isLoadNeeded) {
-            loadFromServer();
-        }
+        loadFromServer();
     }
 
     @Override
-    protected void save() {
-        String jsonTasks = gson.toJson(new ArrayList<>(super.getTasks().values()));
+    public void save() {
+        String jsonTasks = gson.toJson(new ArrayList<>(super.getTasksList()));
         kvTaskClient.put("tasks", jsonTasks);
 
-        String jsonEpics = gson.toJson(new ArrayList<>(super.getEpics().values()));
+        String jsonEpics = gson.toJson(new ArrayList<>(super.getEpicsList()));
         kvTaskClient.put("epics", jsonEpics);
 
-        String jsonSubTasks = gson.toJson(new ArrayList<>(super.getSubTasks().values()));
+        String jsonSubTasks = gson.toJson(new ArrayList<>(super.getSubtaskList()));
         kvTaskClient.put("subtasks", jsonSubTasks);
 
         String jsonHistory = gson.toJson(getHistory().stream().map(Task::getId).collect(Collectors.toList()));
@@ -59,50 +59,33 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         String jsonSubTasks = this.kvTaskClient.load("subtasks");
         if (!jsonSubTasks.isEmpty()) {
-            subTasks.clear();
-            ArrayList<SubTask> subTaskList = gson.fromJson(jsonSubTasks, new TypeToken<ArrayList<SubTask>>() {
+            subtasks.clear();
+            ArrayList<Subtask> subTaskList = gson.fromJson(jsonSubTasks, new TypeToken<ArrayList<Subtask>>() {
             }.getType());
-            for (SubTask subTask : subTaskList) {
-                Epic epic = epics.get(subTask.getEpicId());
+            for (Subtask subtask : subTaskList) {
+                Epic epic = epics.get(subtask.getEpicID());
                 if (epic != null) {
-                    checkOverlaping(subTask);
-                    subTasks.put(subTask.getId(), subTask);
-                    prioritizedTasks.add(subTask);
-                    epic.getSubTasksEpic().put(subTask.getId(), subTask);
-                    updateStatusEpic(epic);
-                    setEpicEndTime(epic);
+                    subtasks.put(subtask.getId(), subtask);
+                    prioritizedTasks.add(subtask);
+                    epic.getSubtasks().add(subtask.getId());
+                    changeEpicStatus(epic);
+                    timeChangeEpic(epic);
                 } else {
                     System.out.println("Эпик не найден.");
                 }
-
             }
         }
 
-        id = getMaxId();
-
-        HistoryManager historyManager = getHistoryManager();
         String jsonHistory = this.kvTaskClient.load("history");
         if (!jsonHistory.isEmpty()) {
             ArrayList<Integer> taskHistoryIds = gson.fromJson(jsonHistory, new TypeToken<ArrayList<Task>>() {
             }.getType());
             for (Integer id : taskHistoryIds) {
-                if (getTasks().containsKey(id)) { historyManager.add(getTask(id)); }
-                if (getEpics().containsKey(id)) { historyManager.add(getEpic(id)); }
-                if (getTasks().containsKey(id)) { historyManager.add(getTask(id)); }
+
+                    inMemoryHistoryManager.add(getTaskByIdNumber(id));
+                    inMemoryHistoryManager.add(getEpicTaskByIdNumber(id));
+                    inMemoryHistoryManager.add(getSubTaskByIdNumber(id));
             }
         }
-
     }
-
-    private int getMaxId() {
-        Collection<Integer> merged = Stream.of(tasks.keySet(), epics.keySet(), subTasks.keySet())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        if (merged.size() == 0) {
-            return 0;
-        } else {
-            return Collections.max(merged);
-        }
-    }
-
 }

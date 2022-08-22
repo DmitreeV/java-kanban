@@ -25,7 +25,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         this.file = file;
     }
 
-    private void save() {
+    public void save() {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
 
@@ -51,7 +51,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     // Метод для сохранения задачи в строку
-    private String toStringTask(Task task) {
+    public String toStringTask(Task task) {
         return task.getDescriptionTask();
     }
 
@@ -349,6 +349,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         super.deleteSubtaskById(idNumber);
         save();
     }
+
 }
 
 
