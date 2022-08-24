@@ -19,7 +19,7 @@ import static task.TaskStatus.*;
 abstract class TaskManagerTest<T extends TaskManager> {
     public T manager;
 
-    abstract T createTaskManager();
+    protected abstract T createTaskManager();
 
     Task firstTask;
     Task secondTask;

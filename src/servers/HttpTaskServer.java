@@ -22,7 +22,7 @@ public class HttpTaskServer {
     protected TaskManager taskManager;
     protected HttpServer httpServer;
 
-    private final Gson gson = new GsonBuilder()
+    public static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
             .create();
@@ -31,13 +31,14 @@ public class HttpTaskServer {
         return gson;
     }
 
+    public static void main(String[] args) throws IOException {
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
+    }
+
     public HttpTaskServer() throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TaskHandler());
-    }
-    public static void main(String[] args) throws IOException {
-       HttpTaskServer server = new HttpTaskServer();
-        server.start();
     }
 
     public void start() {
@@ -48,7 +49,7 @@ public class HttpTaskServer {
 
     public void stop() {
         System.out.println("Завершение работы сервера");
-        httpServer.stop(0);
+        httpServer.stop(1);
     }
 
     private class TaskHandler implements HttpHandler {
@@ -61,39 +62,55 @@ public class HttpTaskServer {
 
             switch (method) {
                 case "GET":
-                    if (splitPath[2].equals("task")) {
-                        handleTaskGet(exchange);
-                    } else if (splitPath[2].equals("epic")) {
-                        handleEpicGet(exchange);
-                    } else if (splitPath[2].equals("subtask")) {
-                        handleSubtaskGet(exchange);
-                    } else if (splitPath[2].equals("history")) {
-                        handleHistoryGet(exchange);
-                    } else {
-                        outputStream(exchange, "Страница не найдена.", 404);
+                    switch (splitPath[2]) {
+                        case "task":
+                            handleTaskGet(exchange);
+                            break;
+                        case "epic":
+                            handleEpicGet(exchange);
+                            break;
+                        case "subtask":
+                            handleSubtaskGet(exchange);
+                            break;
+                        case "history":
+                            handleHistoryGet(exchange);
+                            break;
+                        default:
+                            outputStream(exchange, "Страница не найдена.", 404);
+                            break;
                     }
                     break;
                 case "POST":
-                    if (splitPath[2].equals("task")) {
-                        handleTaskPost(exchange);
-                    } else if (splitPath[2].equals("epic")) {
-                        handleEpicPost(exchange);
-                    } else if (splitPath[2].equals("subtask")) {
-                        handleSubtaskPost(exchange);
-                    } else {
-                        outputStream(exchange, "Страница не найдена.", 404);
+                    switch (splitPath[2]) {
+                        case "task":
+                            handleTaskPost(exchange);
+                            break;
+                        case "epic":
+                            handleEpicPost(exchange);
+                            break;
+                        case "subtask":
+                            handleSubtaskPost(exchange);
+                            break;
+                        default:
+                            outputStream(exchange, "Страница не найдена.", 404);
+                            break;
                     }
                     break;
 
                 case "DELETE":
-                    if (splitPath[2].equals("task")) {
-                        handleTaskDelete(exchange);
-                    } else if (splitPath[2].equals("epic")) {
-                        handleEpicDelete(exchange);
-                    } else if (splitPath[2].equals("subtask")) {
-                        handleSubtaskDelete(exchange);
-                    } else {
-                        outputStream(exchange, "Страница не найдена.", 404);
+                    switch (splitPath[2]) {
+                        case "task":
+                            handleTaskDelete(exchange);
+                            break;
+                        case "epic":
+                            handleEpicDelete(exchange);
+                            break;
+                        case "subtask":
+                            handleSubtaskDelete(exchange);
+                            break;
+                        default:
+                            outputStream(exchange, "Страница не найдена.", 404);
+                            break;
                     }
                     break;
                 default:
@@ -116,14 +133,14 @@ public class HttpTaskServer {
             if (exchange.getRequestURI().getQuery() != null) {
                 int id = Integer.parseInt(exchange.getRequestURI().toString()
                         .split("\\?")[1].split("=")[1]);
-                if (!taskManager.getTasksList().isEmpty()) {
+                if (taskManager.getTasksList().size() != 0) {
                     Task task = taskManager.getTaskByIdNumber(id);
                     outputStream(exchange, gson.toJson(task), 200);
                 } else {
                     outputStream(exchange, "Задача не найдена.", 404);
                 }
             } else {
-                if (!taskManager.getTasksList().isEmpty()) {
+                if (taskManager.getTasksList().size() != 0) {
                     outputStream(exchange, gson.toJson(taskManager.getTasksList()), 200);
                 } else {
                     outputStream(exchange, "Список задач не найден .", 404);
@@ -135,14 +152,14 @@ public class HttpTaskServer {
             if (exchange.getRequestURI().getQuery() != null) {
                 int id = Integer.parseInt(exchange.getRequestURI().toString()
                         .split("\\?")[1].split("=")[1]);
-                if (!taskManager.getEpicsList().isEmpty()) {
+                if (taskManager.getEpicsList().size() != 0) {
                     Epic epic = taskManager.getEpicTaskByIdNumber(id);
                     outputStream(exchange, gson.toJson(epic), 200);
                 } else {
                     outputStream(exchange, "Эпик не найден.", 404);
                 }
             } else {
-                if (!taskManager.getEpicsList().isEmpty()) {
+                if (taskManager.getEpicsList().size() != 0) {
                     outputStream(exchange, gson.toJson(taskManager.getEpicsList()), 200);
                 } else {
                     outputStream(exchange, "Список эпиков не найден .", 404);
@@ -154,14 +171,14 @@ public class HttpTaskServer {
             if (exchange.getRequestURI().getQuery() != null) {
                 int id = Integer.parseInt(exchange.getRequestURI().toString()
                         .split("\\?")[1].split("=")[1]);
-                if (!taskManager.getSubtaskList().isEmpty()) {
+                if (taskManager.getSubtaskList().size() != 0) {
                     Subtask subtask = taskManager.getSubTaskByIdNumber(id);
                     outputStream(exchange, gson.toJson(subtask), 200);
                 } else {
                     outputStream(exchange, "Подзадача не найдена.", 404);
                 }
             } else {
-                if (!taskManager.getSubtaskList().isEmpty()) {
+                if (taskManager.getSubtaskList().size() != 0) {
                     outputStream(exchange, gson.toJson(taskManager.getSubtaskList()), 200);
                 } else {
                     outputStream(exchange, "Список подзадач не найден .", 404);
@@ -181,7 +198,7 @@ public class HttpTaskServer {
                 taskManager.creationTask(task);
                 outputStream(exchange, "Task задача успешно добавлена!", 200);
             } else {
-                if (!taskManager.getTasksList().isEmpty()) {
+                if (taskManager.getTasksList().size() != 0) {
                     taskManager.updateTask(task);
                     outputStream(exchange, "Task задача успешно обновлена!", 200);
                 } else {
@@ -202,7 +219,7 @@ public class HttpTaskServer {
                 taskManager.creationEpic(epic);
                 outputStream(exchange, "Epic задача успешно добавлена!", 200);
             } else {
-                if (!taskManager.getEpicsList().isEmpty()) {
+                if (taskManager.getEpicsList().size() != 0) {
                     taskManager.updateEpic(epic);
                     outputStream(exchange, "Epic задача успешно обновлена!", 200);
                 } else {
@@ -220,11 +237,11 @@ public class HttpTaskServer {
             Subtask subtask = gson.fromJson(body, Subtask.class);
             Integer id = subtask.getId();
             if (id == null) {
-                if (!taskManager.getEpicsList().isEmpty()) {
+                if (taskManager.getEpicsList().size() != 0) {
                     taskManager.creationSubtask(subtask);
                     outputStream(exchange, "Subtask задача успешно добавлена!", 200);
                 } else {
-                    if (!taskManager.getSubtaskList().isEmpty()) {
+                    if (taskManager.getSubtaskList().isEmpty()) {
                         taskManager.updateSubtask(subtask);
                         outputStream(exchange, "Subtask задача успешно обновлена!", 200);
                     } else {

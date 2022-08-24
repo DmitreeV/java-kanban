@@ -4,7 +4,7 @@ import manager.Managers;
 import manager.TaskManager;
 
 class InMemoryTaskManagerTest extends TaskManagerTest {
-    TaskManager manager = Managers.getDefault1();
+    TaskManager manager = Managers.getDefaultInMemoryTaskManager();
 
     @Override
     TaskManager createTaskManager() {

@@ -27,6 +27,9 @@ public class KVTaskClient {
                 .build();
         try {
             response = client.send(request, handler);
+            if (response.statusCode() != 200) {
+                throw new RuntimeException();
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -35,14 +38,16 @@ public class KVTaskClient {
 
     public void put(String key, String json) {
         URI uri = URI.create(url + "/save/" + key + "?API_TOKEN=" + apiToken);
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(body)
                 .uri(uri)
                 .build();
-
         try {
             response = client.send(request, handler);
+            if (response.statusCode() != 200) {
+                throw new RuntimeException();
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -51,11 +56,14 @@ public class KVTaskClient {
     public String load(String key) {
         URI uri = URI.create(url + "/load/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest request = HttpRequest.newBuilder()
-                .GET()
                 .uri(uri)
+                .GET()
                 .build();
         try {
             response = client.send(request, handler);
+            if (response.statusCode() != 200) {
+                throw new RuntimeException();
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
