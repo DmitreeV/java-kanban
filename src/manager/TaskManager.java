@@ -11,11 +11,11 @@ import java.util.Set;
 public interface TaskManager {
 
     // 1. Сохранение задач
-    void saveTask(Task task);
+    int saveTask(Task task);
 
-    void saveEpic(Epic epic);
+    int saveEpic(Epic epic);
 
-    void saveSubtask(Subtask subtask);
+    int saveSubtask(Subtask subtask);
 
     // 2.1 Получение списка задач
     ArrayList<Task> getTasksList();
@@ -39,18 +39,18 @@ public interface TaskManager {
     Subtask getSubTaskByIdNumber(int idNumber);
 
 // 2.5 Обновление задачи
-    void updateTask(Task task);
+    int updateTask(Task task);
 
-    void updateEpic(Epic epic);
+    int updateEpic(Epic epic);
 
-    void updateSubtask(Subtask subtask);
+    int updateSubtask(Subtask subtask);
 
 // 2.6 Удаление по идентификатору
-    void deleteTaskById(int idNumber);
+    Task deleteTaskById(int idNumber);
 
-    void deleteEpicById(int idNumber);
+    Epic deleteEpicById(int idNumber);
 
-    void deleteSubtaskById(int idNumber);
+    Subtask deleteSubtaskById(int idNumber);
 
     // 3.1 Получение списка подзадач определённого эпика
     ArrayList<Subtask> subtaskList(int idNumber);

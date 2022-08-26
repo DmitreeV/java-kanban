@@ -16,14 +16,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     private static final String TOP_STRING = "id,type,name,status,description,startTime,duration,epic";
 
-    private final File file;
+    public File file;
 
     private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public FileBackedTasksManager(File file) {
-        super();
         this.file = file;
     }
+
+    public FileBackedTasksManager() {}
 
     public void save() {
 
@@ -173,85 +174,88 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     // Тест
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
+//
+//        File testFile = new File("src/manager/testFiles.csv");
+//        FileBackedTasksManager fbTasksManager = new FileBackedTasksManager(testFile);
+//
+//        fbTasksManager.saveTask(new Task("Погулять с собакой", NEW,
+//                "Погулять с собакой час", LocalDateTime.now().minusMinutes(30), 20));
+//
+//        fbTasksManager.saveTask(new Task("Пойти в бассейн", NEW,
+//                "Хорошо поплавать",LocalDateTime.of(2000,5,5,10,20), 10));
+//
+//        fbTasksManager.saveEpic(new Epic("Приготовить ужин", NEW,
+//                "Приготовить ужин для всей семьи",LocalDateTime.now().plusMinutes(30), 35));
+//
+//        fbTasksManager.saveEpic(new Epic("Купить продукты", DONE,
+//                "Купить всё и ничего не забыть",LocalDateTime.of(2000,3,30,
+//                10,20), 10));
+//
+//        fbTasksManager.saveSubtask(new Subtask("Купить вино", DONE,
+//                "Вино белое полусладкое",LocalDateTime.of(2016,7,1,10,20), 40, 3));
+//
+//        fbTasksManager.saveSubtask(new Subtask("Найденная сабтаска", DONE,
+//                "Эта сабтаска читается",LocalDateTime.of(2015,6,1,10,20), 40, 3));
+//
+//        fbTasksManager.getTaskByIdNumber(1);
+//        fbTasksManager.getEpicTaskByIdNumber(3);
+//        fbTasksManager.getSubTaskByIdNumber(5);
+//        fbTasksManager.getSubTaskByIdNumber(6);
+//
+//        FileBackedTasksManager fbTasksManager2 = loadFromFile(new File("src/manager/testFiles.csv"));
+//        Collection<Task> tasks = fbTasksManager2.getTasksList();
+//        for (Task line : tasks)
+//            System.out.println(line);
+//        Collection<Epic> epics = fbTasksManager2.getEpicsList();
+//        for (Task line : epics)
+//            System.out.println(line);
+//        Collection<Subtask> subtasks = fbTasksManager2.getSubtaskList();
+//        for (Task line : subtasks)
+//            System.out.println(line);
+//
+//       System.out.println("История просмотров:");
+//        for (Task line : fbTasksManager2.getHistory())
+//            System.out.println(line);
+//
+//        File testFile1 = new File("src/manager/testFiles2.csv");
+//        FileBackedTasksManager fbTasksManager1 = new FileBackedTasksManager(testFile1);
+//
+//        fbTasksManager1.saveTask(new Task("Тестовая таска", NEW,
+//                "Описание", LocalDateTime.now().minusMinutes(30), 20));
+//
+//        fbTasksManager1.getTaskByIdNumber(1);
+//
+//        File testFile3 = new File("src/manager/testFiles3.csv");
+//        FileBackedTasksManager fbTasksManager3 = new FileBackedTasksManager(testFile3);
+//
+//        fbTasksManager3.saveTask(new Task("Тестовая таска", NEW,
+//                "Описание", LocalDateTime.now().minusMinutes(30), 20));
+//        fbTasksManager3.saveEpic(new Epic("Тестовый эпик", NEW,
+//                "Описание", LocalDateTime.now().minusMinutes(40), 40));
+//        fbTasksManager3.saveSubtask(new Subtask("Тестовая сабтаска", NEW,
+//                "Описание", LocalDateTime.now().minusMinutes(50), 10,2));
+//    }
 
-        File testFile = new File("src/manager/testFiles.csv");
-        FileBackedTasksManager fbTasksManager = new FileBackedTasksManager(testFile);
-
-        fbTasksManager.saveTask(new Task("Погулять с собакой", TaskStatus.NEW,
-                "Погулять с собакой час", LocalDateTime.now().minusMinutes(30), 20));
-
-        fbTasksManager.saveTask(new Task("Пойти в бассейн", TaskStatus.NEW,
-                "Хорошо поплавать",LocalDateTime.of(2000,5,5,10,20), 10));
-
-        fbTasksManager.saveEpic(new Epic("Приготовить ужин", TaskStatus.NEW,
-                "Приготовить ужин для всей семьи",LocalDateTime.now().plusMinutes(30), 35));
-
-        fbTasksManager.saveEpic(new Epic("Купить продукты", TaskStatus.DONE,
-                "Купить всё и ничего не забыть",LocalDateTime.of(2000,3,30,
-                10,20), 10));
-
-        fbTasksManager.saveSubtask(new Subtask("Купить вино", TaskStatus.DONE,
-                "Вино белое полусладкое",LocalDateTime.of(2016,7,1,10,20), 40, 3));
-
-        fbTasksManager.saveSubtask(new Subtask("Найденная сабтаска", TaskStatus.DONE,
-                "Эта сабтаска читается",LocalDateTime.of(2015,6,1,10,20), 40, 3));
-
-        fbTasksManager.getTaskByIdNumber(1);
-        fbTasksManager.getEpicTaskByIdNumber(3);
-        fbTasksManager.getSubTaskByIdNumber(5);
-        fbTasksManager.getSubTaskByIdNumber(6);
-
-        FileBackedTasksManager fbTasksManager2 = loadFromFile(new File("src/manager/testFiles.csv"));
-        Collection<Task> tasks = fbTasksManager2.getTasksList();
-        for (Task line : tasks)
-            System.out.println(line);
-        Collection<Epic> epics = fbTasksManager2.getEpicsList();
-        for (Task line : epics)
-            System.out.println(line);
-        Collection<Subtask> subtasks = fbTasksManager2.getSubtaskList();
-        for (Task line : subtasks)
-            System.out.println(line);
-
-       System.out.println("История просмотров:");
-        for (Task line : fbTasksManager2.getHistory())
-            System.out.println(line);
-
-        File testFile1 = new File("src/manager/testFiles2.csv");
-        FileBackedTasksManager fbTasksManager1 = new FileBackedTasksManager(testFile1);
-
-        fbTasksManager1.saveTask(new Task("Тестовая таска", TaskStatus.NEW,
-                "Описание", LocalDateTime.now().minusMinutes(30), 20));
-
-        fbTasksManager1.getTaskByIdNumber(1);
-
-        File testFile3 = new File("src/manager/testFiles3.csv");
-        FileBackedTasksManager fbTasksManager3 = new FileBackedTasksManager(testFile3);
-
-        fbTasksManager3.saveTask(new Task("Тестовая таска", TaskStatus.NEW,
-                "Описание", LocalDateTime.now().minusMinutes(30), 20));
-        fbTasksManager3.saveEpic(new Epic("Тестовый эпик", TaskStatus.NEW,
-                "Описание", LocalDateTime.now().minusMinutes(40), 40));
-        fbTasksManager3.saveSubtask(new Subtask("Тестовая сабтаска", TaskStatus.NEW,
-                "Описание", LocalDateTime.now().minusMinutes(50), 10,2));
+    @Override
+    public int saveTask(Task task) {
+        int id = super.saveTask(task);
+        save();
+        return id;
     }
 
     @Override
-    public void saveTask(Task task) {
-        super.saveTask(task);
+    public int saveEpic(Epic epic) {
+        int id = super.saveEpic(epic);
         save();
+        return id;
     }
 
     @Override
-    public void saveEpic(Epic epic) {
-        super.saveEpic(epic);
+    public int saveSubtask(Subtask subtask) {
+        int id = super.saveSubtask(subtask);
         save();
-    }
-
-    @Override
-    public void saveSubtask(Subtask subtask) {
-        super.saveSubtask(subtask);
-        save();
+        return id;
     }
 
     @Override
@@ -315,41 +319,46 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void updateTask(Task task) {
-        super.updateTask(task);
+    public int updateTask(Task task) {
+        int id = super.updateTask(task);
         save();
+        return id;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
+    public int updateEpic(Epic epic) {
+        int id = super.updateEpic(epic);
         save();
+        return id;
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        super.updateSubtask(subtask);
+    public int updateSubtask(Subtask subtask) {
+        int id = super.updateSubtask(subtask);
         save();
+        return id;
     }
 
     @Override
-    public void deleteTaskById(int idNumber) {
-        super.deleteTaskById(idNumber);
+    public Task deleteTaskById(int idNumber) {
+        Task task = super.deleteTaskById(idNumber);
         save();
+        return task;
     }
 
     @Override
-    public void deleteEpicById(int idNumber) {
-        super.deleteEpicById(idNumber);
+    public Epic deleteEpicById(int idNumber) {
+        Epic epic = super.deleteEpicById(idNumber);
         save();
+        return epic;
     }
 
     @Override
-    public void deleteSubtaskById(int idNumber) {
-        super.deleteSubtaskById(idNumber);
+    public Subtask deleteSubtaskById(int idNumber) {
+        Subtask subtask = super.deleteSubtaskById(idNumber);
         save();
+        return subtask;
     }
-
 }
 
 

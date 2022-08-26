@@ -20,7 +20,7 @@ public class KVServer {
     private final Map<String, String> data = new HashMap<>();
 
     public KVServer() throws IOException {
-        apiToken = generateApiToken();
+        apiToken = newApiToken();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
@@ -105,7 +105,7 @@ public class KVServer {
 
     public void start() {
         System.out.println("Запускаем сервер на порту " + PORT);
-        System.out.println("Открой в браузере http://localhost:" + PORT + "/");
+        System.out.println("Ссылка в браузере http://localhost:" + PORT + "/");
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
     }
@@ -114,7 +114,7 @@ public class KVServer {
         server.stop(1);
     }
 
-    private String generateApiToken() {
+    private String newApiToken() {
         return "" + System.currentTimeMillis();
     }
 

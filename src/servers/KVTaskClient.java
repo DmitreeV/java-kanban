@@ -8,64 +8,61 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
 
-    private final String apiToken;
-    private final String url;
-    HttpClient client = HttpClient.newHttpClient();
-    private HttpResponse<String> response;
+    private static final String URN_REGISTER = "/register";
+    private static final String URN_SAVE = "/save/";
+    private static final String URN_LOAD = "/load/";
+    private final String API_TOKEN;
+    private final HttpClient client = HttpClient.newHttpClient();
     private final HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+    private final String url;
+    private HttpResponse<String> response;
 
-    public KVTaskClient(String url)  {
+    public KVTaskClient(String url) {
         this.url = url;
-        this.apiToken = register();
-    }
-
-    public String register()  {
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(url + "/register"))
-                .version(HttpClient.Version.HTTP_1_1)
+        URI uri = URI.create(url + URN_REGISTER);
+        HttpRequest request = HttpRequest.newBuilder().GET().uri(uri)
+                .version(HttpClient.Version.HTTP_1_1).header("Accept", "application/json")
                 .build();
         try {
             response = client.send(request, handler);
+
             if (response.statusCode() != 200) {
                 throw new RuntimeException();
             }
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
-        return response.body();
+        API_TOKEN = response.body();
     }
 
     public void put(String key, String json) {
-        URI uri = URI.create(url + "/save/" + key + "?API_TOKEN=" + apiToken);
-        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(body)
-                .uri(uri)
-                .build();
+        URI uri = URI.create(url + URN_SAVE + key + "?API_TOKEN=" + API_TOKEN);
+        HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(json))
+                .uri(uri).version(HttpClient.Version.HTTP_1_1)
+                .header("Accept", "application/json").build();
         try {
             response = client.send(request, handler);
+            System.out.println(response.statusCode());
             if (response.statusCode() != 200) {
                 throw new RuntimeException();
             }
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
     }
 
     public String load(String key) {
-        URI uri = URI.create(url + "/load/" + key + "?API_TOKEN=" + apiToken);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
+        URI uri = URI.create(url + URN_LOAD + key + "?API_TOKEN=" + API_TOKEN);
+        HttpRequest request = HttpRequest.newBuilder().GET()
+                .uri(uri).version(HttpClient.Version.HTTP_1_1)
+                .header("Accept", "application/json").build();
         try {
             response = client.send(request, handler);
             if (response.statusCode() != 200) {
                 throw new RuntimeException();
             }
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
         return response.body();
     }

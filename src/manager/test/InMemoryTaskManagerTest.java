@@ -1,13 +1,14 @@
 package manager.test;
 
+import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 
 class InMemoryTaskManagerTest extends TaskManagerTest {
-    TaskManager manager = Managers.getDefaultInMemoryTaskManager();
+    //TaskManager manager = Managers.getDefaultInMemoryTaskManager();
 
     @Override
-    TaskManager createTaskManager() {
-        return manager;
+    public InMemoryTaskManager createTaskManager() {
+        return new InMemoryTaskManager();
     }
 }

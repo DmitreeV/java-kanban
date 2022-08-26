@@ -19,7 +19,7 @@ import static task.TaskStatus.*;
 abstract class TaskManagerTest<T extends TaskManager> {
     public T manager;
 
-    protected abstract T createTaskManager();
+    abstract T createTaskManager();
 
     Task firstTask;
     Task secondTask;
@@ -36,49 +36,53 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         manager = createTaskManager();
 
-        firstTask = manager.creationTask(new Task("Таск 1", NEW,
+        firstTask = new Task("Таск 1", NEW,
                 "Описание Таск 1", LocalDateTime.of(2000, 5, 5, 10, 20),
-                10));
-        manager.saveTask(firstTask);
+                10);
 
-        secondTask = manager.creationTask(new Task("Таск 2", NEW,
+        secondTask = new Task("Таск 2", NEW,
                 "Описание Таск 2", LocalDateTime.of(2000, 6, 10, 11, 25),
-                50));
-        manager.saveTask(secondTask);
+                50);
 
-        firstEpic = manager.creationEpic(new Epic("Эпик 1", TaskStatus.NEW,
+        firstEpic = new Epic("Эпик 1", TaskStatus.NEW,
                 "Описание Эпик 1", LocalDateTime.of(2001, 9, 11, 10, 20),
-                10));
-        manager.saveEpic(firstEpic);
+                10);
 
-        secondEpic = manager.creationEpic(new Epic("Эпик 2", TaskStatus.NEW,
-                "Описание Эпик 2", LocalDateTime.now().minusMinutes(30), 20));
-        manager.saveEpic(secondEpic);
+        secondEpic = new Epic("Эпик 2", TaskStatus.NEW,
+                "Описание Эпик 2", LocalDateTime.now().minusMinutes(30), 20);
 
-        firstSubtask = manager.creationSubtask(new Subtask("Сабтаск 1", NEW,
+        firstSubtask = new Subtask("Сабтаск 1", NEW,
                 "Описание Сабтаск 1", LocalDateTime.of(2010, 1, 11, 11, 40),
-                50, 3));
-        manager.saveSubtask(firstSubtask);
+                50, 3);
 
-        secondSubtask = manager.creationSubtask(new Subtask("Сабтаск 2",
+        secondSubtask = new Subtask("Сабтаск 2",
                 TaskStatus.DONE, "Описание Сабтаск 2", LocalDateTime.now().minusMinutes(30), 40,
-                3));
-        manager.saveSubtask(secondSubtask);
+                3);
 
-        thirdSubtask = manager.creationSubtask(new Subtask("Сабтаск 3",
+        thirdSubtask = new Subtask("Сабтаск 3",
                 TaskStatus.DONE, "Описание Сабтаск 3",
-                LocalDateTime.of(2015, 6, 14, 11, 30), 40, 4));
-        manager.saveSubtask(thirdSubtask);
+                LocalDateTime.of(2015, 6, 14, 11, 30), 40, 4);
 
-        thirdEpic = manager.creationEpic(new Epic("Эпик 3", NEW,
+        thirdEpic = new Epic("Эпик 3", NEW,
                 "Для теста статусов", LocalDateTime.of(2020, 2, 20, 20, 20),
-                20));
+                20);
+    }
+
+    void saveTasks(){
+        manager.saveTask(firstTask);
+        manager.saveTask(secondTask);
+        manager.saveEpic(firstEpic);
+        manager.saveEpic(secondEpic);
+        manager.saveSubtask(firstSubtask);
+        manager.saveSubtask(secondSubtask);
+        manager.saveSubtask(thirdSubtask);
         manager.saveEpic(thirdEpic);
     }
 
     @Test
     void testSaveTask() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         assertEquals(manager.getTaskByIdNumber(1).getName(), firstTask.getName());
         assertEquals(manager.getTaskByIdNumber(1).getTaskType(), firstTask.getTaskType());
@@ -95,6 +99,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testSaveEpic() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         assertEquals(manager.getEpicTaskByIdNumber(3).getName(), firstEpic.getName());
         assertEquals(manager.getEpicTaskByIdNumber(3).getTaskType(), firstEpic.getTaskType());
@@ -111,6 +116,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testSaveSubtask() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         assertEquals(manager.getSubTaskByIdNumber(5).getName(), firstSubtask.getName());
         assertEquals(manager.getSubTaskByIdNumber(5).getTaskType(), firstSubtask.getTaskType());
@@ -139,6 +145,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetTasksList() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         List<Task> testList1 = new ArrayList<>(List.of(firstTask, secondTask));
         List<Task> testList2 = manager.getTasksList();
@@ -152,6 +159,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetEpicsList() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         List<Epic> testList1 = new ArrayList<>(List.of(firstEpic, secondEpic, thirdEpic));
         List<Epic> testList2 = manager.getEpicsList();
@@ -165,6 +173,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetSubtaskList() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         List<Subtask> testList1 = new ArrayList<>(List.of(firstSubtask, secondSubtask, thirdSubtask));
         List<Subtask> testList2 = manager.getSubtaskList();
@@ -178,6 +187,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testDeleteTasks() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         manager.deleteTasks();
         List<Task> testList = manager.getTasksList();
@@ -190,6 +200,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testDeleteEpics() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         manager.deleteEpics();
         List<Epic> testList = manager.getEpicsList();
@@ -202,6 +213,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testDeleteSubtasks() {
 
+        saveTasks();
         //a. Со стандартным поведением.
         manager.deleteSubtasks();
         List<Subtask> testList = manager.getSubtaskList();
@@ -217,6 +229,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetTaskByIdNumber() {
+        saveTasks();
         //c. С неверным идентификатором задачи
         assertNull(manager.getTaskByIdNumber(10));
 
@@ -235,7 +248,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetEpicTaskByIdNumber() {
-
+        saveTasks();
         //c. С неверным идентификатором задачи
         assertNull(manager.getEpicTaskByIdNumber(10));
 
@@ -254,6 +267,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetSubTaskByIdNumber() {
+        saveTasks();
         //c. С неверным идентификатором задачи
         assertNull(manager.getSubTaskByIdNumber(10));
 
@@ -272,7 +286,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testCreationTask() {
-
+        saveTasks();
         //a. Со стандартным поведением.
         Task testTask = new Task("Таск 1", NEW,
                 "Описание Таск 1", LocalDateTime.of(2000, 5, 5, 10, 20),
@@ -293,7 +307,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testCreationEpic() {
-
+        saveTasks();
         //a. Со стандартным поведением.
         Epic testEpic = new Epic("Эпик 1", IN_PROGRESS,
                 "Описание Эпик 1", LocalDateTime.of(2010, 1, 11, 11, 40),
@@ -313,7 +327,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testCreationSubtask() {
-
+        saveTasks();
         //a. Со стандартным поведением.
         Subtask testSubtask = new Subtask("Сабтаск 1", NEW,
                 "Описание Сабтаск 1", LocalDateTime.of(2010, 1, 11, 11, 40),
@@ -342,7 +356,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testUpdateTask() {
-
+        saveTasks();
         //a. Со стандартным поведением.
         Task testTask = new Task("Таск 1", NEW,
                 "Описание Таск 1", LocalDateTime.of(2000, 5, 5, 10, 20),
@@ -363,7 +377,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testUpdateEpic() {
-
+        saveTasks();
         List<Integer> list = new ArrayList<>();
         //a. Со стандартным поведением.
         Epic testEpic = new Epic("Эпик 1", IN_PROGRESS,
@@ -384,7 +398,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testUpdateSubtask() {
-
+        saveTasks();
         //a. Со стандартным поведением.
         Subtask testSubtask = new Subtask("Сабтаск 1", DONE,
                 "Описание Сабтаск 1", LocalDateTime.of(2010, 1, 11, 11, 40),
@@ -410,7 +424,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteTaskById() {
-
+        saveTasks();
         //c. С неверным идентификатором задачи
         manager.deleteTaskById(10);
         assertEquals(2, manager.getTasksList().size());
@@ -426,7 +440,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteEpicById() {
-
+        saveTasks();
         //c. С неверным идентификатором задачи
         manager.deleteEpicById(10);
         assertEquals(3, manager.getEpicsList().size());
@@ -441,6 +455,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteSubtaskById() {
+        saveTasks();
 
         //c. С неверным идентификатором задачи
         manager.deleteSubtaskById(10);
@@ -462,7 +477,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testSubtaskList() {
-
+        saveTasks();
         //c. С неверным идентификатором задачи
         assertNull(manager.getEpicTaskByIdNumber(10));
 
@@ -477,6 +492,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testChangeEpicStatusAllSubtaskStatusNew() {
+        saveTasks();
         //b. Все подзадачи со статусом NEW
         Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 NEW, "Описание Саб 1",
@@ -497,6 +513,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testChangeEpicStatusAllSubtaskStatusDone() {
+        saveTasks();
         //c. Все подзадачи со статусом DONE
         Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 DONE, "Описание Саб 1",
@@ -517,6 +534,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testChangeEpicStatusSubtaskStatusDoneNew() {
+        saveTasks();
         //d. Подзадачи со статусом DONE и NEW
         Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 DONE, "Описание Саб 1",
@@ -537,6 +555,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testChangeEpicStatusAllSubtaskStatusInProgress() {
+        saveTasks();
         //b. Все подзадачи со статусом IN_PROGRESS
         Subtask sub1 = manager.creationSubtask(new Subtask("Саб 1",
                 IN_PROGRESS, "Описание Саб 1",
@@ -557,7 +576,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetPrioritizedTasks() {
-
+        saveTasks();
         //a. Со стандартным поведением.
         Set<Task> expected = new TreeSet<>((o1, o2) -> {
             if ((o1.getStartTime() != null) && (o2.getStartTime() != null)) {
@@ -588,7 +607,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetHistory() {
-
+        saveTasks();
         historyManager = new InMemoryHistoryManager();
 
         //a. Пустая история задач

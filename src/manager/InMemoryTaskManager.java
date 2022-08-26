@@ -35,22 +35,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     // 1. Сохранение задач
     @Override
-    public void saveTask(Task task) {
+    public int saveTask(Task task) {
         tasksWithoutIntersectionsInTime(task);
         task.setId(++idNumber);
         tasks.put(task.getId(), task);
         prioritizedTasks.add(task);
+        return task.getId();
     }
 
     @Override
-    public void saveEpic(Epic epic) {
+    public int saveEpic(Epic epic) {
         epic.setId(++idNumber);
         epics.put(epic.getId(), epic);
         changeEpicStatus(epic);
+        return epic.getId();
     }
 
     @Override
-    public void saveSubtask(Subtask subtask) {
+    public int saveSubtask(Subtask subtask) {
         tasksWithoutIntersectionsInTime(subtask);
         int epicIdOfSubTask = subtask.getEpicID();
         Epic epic = epics.get(epicIdOfSubTask);
@@ -61,6 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
             timeChangeEpic(epic);
             prioritizedTasks.add(subtask);
         }
+        return subtask.getId();
     }
 
     // 2.1 Получение списка задач
@@ -173,25 +176,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     // 2.5 Обновление задачи
     @Override
-    public void updateTask(Task task) {
+    public int updateTask(Task task) {
         tasksWithoutIntersectionsInTime(task);
         int idUpdatedTask = task.getId();
+
         if (tasks.containsKey(idUpdatedTask)) {
             tasks.put(idUpdatedTask, task);
             prioritizedTasks.removeIf(task1 -> task1.getId() == task.getId());
             prioritizedTasks.add(task);
         }
+        return idUpdatedTask;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public int updateEpic(Epic epic) {
         Epic currentEpic = epics.get(epic.getId());
         currentEpic.setName(epic.getName());
         currentEpic.setDescription(epic.getDescription());
+        return epic.getId();
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public int updateSubtask(Subtask subtask) {
         tasksWithoutIntersectionsInTime(subtask);
         int idUpdatedSubtask = subtask.getId();
         if (subtasks.containsKey(idUpdatedSubtask)) {
@@ -205,25 +211,27 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.removeIf(task1 -> task1.getId() == subtask.getId());
             prioritizedTasks.add(subtask);
         }
+        return idUpdatedSubtask;
     }
 
     // 2.6 Удаление по идентификатору
     @Override
-    public void deleteTaskById(int idNumber) {
+    public Task deleteTaskById(int idNumber) {
         Task task = tasks.get(idNumber);
         if(task == null){
-            return;
+            return null;
         }
-        inMemoryHistoryManager.remove(idNumber);
         prioritizedTasks.remove(task);
+        inMemoryHistoryManager.remove(idNumber);
         tasks.remove(idNumber);
+        return task;
     }
 
     @Override
-    public void deleteEpicById(int idNumber) {
+    public Epic deleteEpicById(int idNumber) {
         Epic epic = epics.get(idNumber);
         if(epic == null){
-            return;
+            return null;
         }
         for (int sub : epic.getSubtasks()) {
             inMemoryHistoryManager.remove(sub);
@@ -235,13 +243,15 @@ public class InMemoryTaskManager implements TaskManager {
         }
         inMemoryHistoryManager.remove(idNumber);
         epics.remove(idNumber);
+
+        return epic;
     }
 
     @Override
-    public void deleteSubtaskById(int idNumber) {
+    public Subtask deleteSubtaskById(int idNumber) {
         Subtask sub = subtasks.get(idNumber);
         if(sub == null){
-            return;
+            return null;
         }
         int epicId = sub.getEpicID();
         Epic epic = epics.get(epicId);
@@ -253,6 +263,8 @@ public class InMemoryTaskManager implements TaskManager {
         inMemoryHistoryManager.remove(idNumber);
         prioritizedTasks.remove(sub);
         subtasks.remove(idNumber);
+
+        return sub;
     }
 
     // 3.1 Получение списка подзадач определённого эпика

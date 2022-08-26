@@ -1,7 +1,5 @@
 package manager;
 
-import java.io.IOException;
-
 public class Managers {
     public static TaskManager getDefaultInMemoryTaskManager() {
         return new InMemoryTaskManager();
@@ -11,7 +9,7 @@ public class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static TaskManager getDefault(String url) {
-        return new HTTPTaskManager(url);
+    public static TaskManager getDefault(String url, String key) {
+        return new HttpTaskManager(url, key);
     }
 }
