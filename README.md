@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/github_username/repo_name">
-    <img src="https://x-lines.ru/letters/i/cyrillicscript/1533/000000/32/0/ktozg43yjiosham8ci3y.png">
+    <img src="https://x-lines.ru/letters/i/cyrillicscript/1533/b4b4b6/32/0/ktozg43yjiosham8ci3y.png">
   </a>
 
   <p align="center">
